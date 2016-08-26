@@ -4,9 +4,37 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="NewBillController">
    <children>
-      <Label text="tu narazie jest sciernisko ale bedzie fakturzysko" />
+      <Pane fx:id="paneNewBill" prefWidth="600.0">
+         <children>
+            <Label layoutX="14.0" layoutY="-1.0" text="wystawiający" />
+            <TextField fx:id="tvCreatorName" layoutX="14.0" layoutY="13.0" />
+            <Label layoutX="177.0" layoutY="-3.0" text="data" />
+            <DatePicker fx:id="datePickerCreateDate" layoutX="177.0" layoutY="13.0" />
+            <Button fx:id="buttonStartBill" layoutX="361.0" layoutY="13.0" mnemonicParsing="false" text="dalej" />
+            <Button fx:id="buttonCancelBill" disable="true" layoutX="409.0" layoutY="13.0" mnemonicParsing="false" text="anuluj" />
+         </children>
+      </Pane>
+      <Pane fx:id="paneAddPurchase" disable="true" prefWidth="600.0">
+         <children>
+            <Label layoutX="14.0" text="nazwa produktu" />
+            <TextField fx:id="tvProductName" layoutX="14.0" layoutY="17.0" />
+            <TextField fx:id="tvProductCount" layoutX="178.0" layoutY="17.0" />
+            <Label layoutX="178.0" text="ilość" />
+            <Button fx:id="buttonAddPurchase" layoutX="335.0" layoutY="17.0" mnemonicParsing="false" text="dodaj" />
+         </children>
+      </Pane>
+      <Pane prefWidth="600.0">
+         <children>
+            <ListView fx:id="listViewPurchases" prefHeight="200.0" prefWidth="600.0" />
+         </children>
+      </Pane>
+      <Pane prefWidth="600.0">
+         <children>
+            <Label text="Suma:" />
+            <Label fx:id="labelSuma" layoutX="41.0" />
+         </children>
+      </Pane>
    </children>
 </VBox>

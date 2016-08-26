@@ -38,6 +38,7 @@ public class HomeController implements Initializable{
                 try{
                     Parent root = FXMLLoader.load(getClass().getResource("newBill_layout.fxml"));
                     Scene scene = new Scene(root, 960, 540);
+                    scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
                     stage.setScene(scene);
                 }catch (IOException e){
                     System.out.println("HEJ! BŁĄD W CHUJ, CHYBA NIE ZANALAZŁO PLIKU FXML Z LAYOUTEM DO OTWARCIA " +

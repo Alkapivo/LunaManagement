@@ -17,6 +17,7 @@ public class Main extends Application{
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("home_layout.fxml"));
         Scene scene = new Scene(root, 960, 540);
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Luna Manager");
         primaryStage.show();
