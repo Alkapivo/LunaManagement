@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
 import java.net.URL;
@@ -34,6 +35,9 @@ public class NewBillController implements Initializable {
     Button buttonCancelBill;
 
     @FXML
+    Button buttonSave;
+
+    @FXML
     Pane paneAddPurchase;
 
     @FXML
@@ -43,12 +47,35 @@ public class NewBillController implements Initializable {
     TextField tvProductCount;
 
     @FXML
+    TextField tvProductTax;
+
+    @FXML
+    TextField tvProductNetto;
+
+    @FXML
     Button buttonAddPurchase;
 
     @FXML
-    ListView<Purchase> listViewPurchases;
+    TableColumn columnName;
+
+    @FXML
+    TableColumn columnCount;
+
+    @FXML
+    TableColumn columnTax;
+
+    @FXML
+    TableColumn columnNetto;
+
+    @FXML
+    TableColumn columnBrutto;
+
+    @FXML
+    TableView tablePurchasesView;
 
     List<Purchase> purchaseList = new ArrayList<>();
+
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -63,6 +90,28 @@ public class NewBillController implements Initializable {
                     return change;
                 }else
                 return null;
+            }
+        }));
+
+        //tvProductTax should take only numbers
+        tvProductTax.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
+            @Override
+            public TextFormatter.Change apply(TextFormatter.Change change) {
+                if(change.getText().matches("[0-9]") || change.getText().matches("") || change.getText().matches("\b")){
+                    return change;
+                }else
+                    return null;
+            }
+        }));
+
+        //tvProductTax should take only numbers
+        tvProductNetto.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
+            @Override
+            public TextFormatter.Change apply(TextFormatter.Change change) {
+                if(change.getText().matches("[0-9]") || change.getText().matches("") || change.getText().matches("\b") || change.getText().matches(".")){
+                    return change;
+                }else
+                    return null;
             }
         }));
 
@@ -86,25 +135,72 @@ public class NewBillController implements Initializable {
             public void handle(ActionEvent event) {
                 tvProductCount.getStyleClass().remove("error");
                 tvProductCount.setPromptText("");
+                tvProductTax.getStyleClass().remove("error");
+                tvProductTax.setPromptText("");
+                tvProductNetto.getStyleClass().remove("error");
+                tvProductNetto.setPromptText("");
+
                 String productName = tvProductName.getText().trim();
                 String productCountString = tvProductCount.getText().trim();
+                String productTaxString = tvProductTax.getText().trim();
+                String productNettoString = tvProductNetto.getText().trim();
+
+                //productName
+                //everything is ok :)
+
+                //productCount
                 if(productCountString.isEmpty()){
                     tvProductCount.getStyleClass().add("error");
-                    tvProductCount.setPromptText("podaj ilość!");
+                    tvProductCount.setPromptText("puste!");
                     return;
                 }
                 int productCount = Integer.parseInt(productCountString);
 
+                //productTax
+                if(productTaxString.isEmpty()){
+                    tvProductTax.getStyleClass().add("error");
+                    tvProductTax.setPromptText("puste!");
+                    return;
+                }
+                int productTax = Integer.parseInt(productTaxString);
+                if(!(productTax >= 0 && productTax <= 100)) {
+                    tvProductTax.getStyleClass().add("error");
+                    tvProductTax.setPromptText("zły zakres!");
+                    return;
+                }
 
-                System.out.println("New row in bill: " + productName + " count: " + productCount);
+                //productNetto
+                double productNetto;
+                try {
+                    productNetto = Double.parseDouble(productNettoString);
+                }
+                catch (NumberFormatException e) {
+                    tvProductNetto.getStyleClass().add("error");
+                    tvProductNetto.setPromptText("co to?");
+                    return;
+                }
 
                 tvProductName.setText("");
                 tvProductCount.setText("");
 
-                Purchase purchase = new Purchase(productName,productCount);
+                Purchase purchase = new Purchase(productName,productCount,productTax,productNetto);
                 purchaseList.add(purchase);
-                listViewPurchases.setItems(FXCollections.observableList(purchaseList));
+                tablePurchasesView.getItems().add(purchase);
             }
         });
+
+        buttonSave.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(),purchaseList);
+                FileDAO.saveToFile(bill);
+            }
+        });
+
+        columnName.setCellValueFactory(new PropertyValueFactory<Purchase, String>("productName"));
+        columnCount.setCellValueFactory(new PropertyValueFactory<Purchase, Integer>("productCount"));
+        columnTax.setCellValueFactory(new PropertyValueFactory<Purchase, Integer>("productTax"));
+        columnNetto.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productNetto"));
+        columnBrutto.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productBrutto"));
     }
 }

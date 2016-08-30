@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -18,22 +19,38 @@
       </Pane>
       <Pane fx:id="paneAddPurchase" disable="true" prefWidth="600.0">
          <children>
-            <Label layoutX="14.0" text="nazwa produktu" />
+            <Label layoutX="14.0" prefHeight="17.0" prefWidth="149.0" text="Nazwa produktu" />
             <TextField fx:id="tvProductName" layoutX="14.0" layoutY="17.0" />
-            <TextField fx:id="tvProductCount" layoutX="178.0" layoutY="17.0" />
-            <Label layoutX="178.0" text="ilość" />
-            <Button fx:id="buttonAddPurchase" layoutX="335.0" layoutY="17.0" mnemonicParsing="false" text="dodaj" />
+            <TextField fx:id="tvProductCount" layoutX="178.0" layoutY="17.0" prefHeight="25.0" prefWidth="48.0" />
+            <Label layoutX="178.0" prefHeight="17.0" prefWidth="48.0" text="Ilość" />
+            <Button fx:id="buttonAddPurchase" layoutX="410.0" layoutY="17.0" mnemonicParsing="false" text="dodaj" />
+            <TextField fx:id="tvProductTax" layoutX="241.0" layoutY="17.0" prefHeight="25.0" prefWidth="48.0" />
+            <Label layoutX="242.0" text="Podatek" />
+            <TextField fx:id="tvProductNetto" layoutX="300.0" layoutY="17.0" prefHeight="25.0" prefWidth="96.0" />
+            <Label layoutX="300.0" prefHeight="17.0" prefWidth="96.0" text="Cena netto" />
          </children>
+         <padding>
+            <Insets bottom="32.0" />
+         </padding>
       </Pane>
       <Pane prefWidth="600.0">
          <children>
-            <ListView fx:id="listViewPurchases" prefHeight="200.0" prefWidth="600.0" />
+            <TableView fx:id="tablePurchasesView" prefHeight="200.0" prefWidth="600.0">
+              <columns>
+                <TableColumn fx:id="columnName" prefWidth="246.0" text="Nazwa produktu" />
+                <TableColumn fx:id="columnCount" prefWidth="67.0" text="Ilość" />
+                  <TableColumn fx:id="columnTax" prefWidth="82.0" text="Podatek" />
+                  <TableColumn fx:id="columnNetto" prefWidth="102.0" text="Cena netto" />
+                  <TableColumn fx:id="columnBrutto" prefWidth="102.0" text="Cena brutto" />
+              </columns>
+            </TableView>
          </children>
       </Pane>
       <Pane prefWidth="600.0">
          <children>
             <Label text="Suma:" />
             <Label fx:id="labelSuma" layoutX="41.0" />
+            <Button fx:id="buttonSave" layoutX="527.0" layoutY="13.0" mnemonicParsing="false" text="Zapisz" />
          </children>
       </Pane>
    </children>

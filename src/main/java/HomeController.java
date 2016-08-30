@@ -60,9 +60,12 @@ public class HomeController implements Initializable{
          * Dokładnie to samo co dwa powyższe przypadki, ustawiamy eventhandlera do przechwytywania eventów na przycisku -
          * czyli np zwyczajnych kliknięć. Tutaj robimy to samo za pomocą lambdy <3
          */
-        button_bills_db.setOnAction(item->{
-            System.out.println("lamda");
-            // TODO: 2016-08-26 go to bills database
+        button_bills_db.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Bill bill = FileDAO.loadFromFile();
+                System.out.println(bill);
+            }
         });
     }
 }
