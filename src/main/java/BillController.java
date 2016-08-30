@@ -20,7 +20,7 @@ import java.util.function.UnaryOperator;
 /**
  * Created by Krolis on 2016-08-26.
  */
-public class NewBillController implements Initializable {
+public class BillController implements Initializable {
 
     @FXML
     TextField tvCreatorName;

@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -63,6 +64,9 @@ public class HomeController implements Initializable{
         button_bills_db.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                FileChooser chooser = new FileChooser();
+                chooser.setTitle("Open File");
+                chooser.showOpenDialog(new Stage());
                 Bill bill = FileDAO.loadFromFile();
                 System.out.println(bill);
             }
