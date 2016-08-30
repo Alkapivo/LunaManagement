@@ -206,7 +206,8 @@ public class BillController implements Initializable {
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(), tablePurchasesView.getItems());
+
+                Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(), new ArrayList(tablePurchasesView.getItems()));
                 FileDAO.saveToFile(bill);
             }
         });

@@ -50,7 +50,6 @@ public class HomeController implements Initializable{
                             "ALBO COS INNEGO SIE ZJEBAŁO XDD");
                     e.printStackTrace();
                 }
-
             }
         });
 
