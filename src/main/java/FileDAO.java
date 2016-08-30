@@ -16,9 +16,9 @@ public class FileDAO {
             //TODO
         }
     }
-    public static Bill loadFromFile() {
+    public static Bill loadFromFile(File fileToOpen) {
         try {
-            ObjectInputStream load = new ObjectInputStream(new FileInputStream("chuj.txt"));
+            ObjectInputStream load = new ObjectInputStream(new FileInputStream(fileToOpen));
             Bill bill = (Bill)load.readObject();
             load.close();
             return bill;

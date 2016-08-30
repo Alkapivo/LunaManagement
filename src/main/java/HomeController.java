@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -68,10 +69,10 @@ public class HomeController implements Initializable{
             public void handle(ActionEvent event) {
                 FileChooser chooser = new FileChooser();
                 chooser.setTitle("Open File");
-                chooser.showOpenDialog(new Stage());
+                File fileToOpen = chooser.showOpenDialog(new Stage());
 
                 try{
-                    Bill bill = FileDAO.loadFromFile();
+                    Bill bill = FileDAO.loadFromFile(fileToOpen);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
                     loader.setController(new BillController(bill));
                     Parent root = loader.load();

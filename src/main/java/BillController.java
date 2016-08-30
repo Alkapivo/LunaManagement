@@ -76,9 +76,9 @@ public class BillController implements Initializable {
 
     private Bill bill;
 
-    public NewBillController(){}
+    public BillController(){}
 
-    public NewBillController(Bill bill) {
+    public BillController(Bill bill) {
         this.bill = bill;
     }
 
