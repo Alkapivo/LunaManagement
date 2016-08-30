@@ -36,7 +36,9 @@ public class HomeController implements Initializable{
                 // (najpierw ją tworzymy, podobnie jak w Main tylko dajemy inny fxml(no inny 'ekran')
                 //blok try catch musimy dodać poniewać metoda FXMLLoader.load(..) wyrzuca wyjątek który musimy jakoś przechwycić
                 try{
-                    Parent root = FXMLLoader.load(getClass().getResource("newBill_layout.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
+                    loader.setController(new NewBillController());
+                    Parent root = loader.load();
                     Scene scene = new Scene(root, 960, 540);
                     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
                     stage.setScene(scene);
@@ -63,8 +65,19 @@ public class HomeController implements Initializable{
         button_bills_db.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Bill bill = FileDAO.loadFromFile();
-                System.out.println(bill);
+                try{
+                    Bill bill = FileDAO.loadFromFile();
+                    System.out.println(bill);
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
+                    loader.setController(new NewBillController(bill));
+                    Parent root = loader.load();
+                    Scene scene = new Scene(root, 960, 540);
+                    scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+                    Stage stage = (Stage) button_bills_db.getScene().getWindow();
+                    stage.setScene(scene);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
             }
         });
     }

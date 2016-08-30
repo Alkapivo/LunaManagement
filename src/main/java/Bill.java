@@ -17,6 +17,30 @@ public class Bill implements Serializable {
         this.list = list;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public List<Purchase> getList() {
+        return list;
+    }
+
+    public void setList(List<Purchase> list) {
+        this.list = list;
+    }
+
     @Override
     public String toString() {
         String result = name+" "+date+" "+list;

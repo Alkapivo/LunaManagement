@@ -1,3 +1,4 @@
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -73,14 +74,28 @@ public class NewBillController implements Initializable {
     @FXML
     TableView tablePurchasesView;
 
-    List<Purchase> purchaseList = new ArrayList<>();
+    private Bill bill;
 
+    public NewBillController(){}
+
+    public NewBillController(Bill bill) {
+        this.bill = bill;
+    }
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //datepicker initialize to today
-        datePickerCreateDate.setValue(LocalDate.now());
+        if(bill==null){
+            //datepicker initialize to today
+            datePickerCreateDate.setValue(LocalDate.now());
+        }else{
+            //initialize all
+            datePickerCreateDate.setValue(bill.getDate());
+            tvCreatorName.setText(bill.getName());
+            tablePurchasesView.getItems().addAll(bill.getList());
+
+        }
+
 
         //tvProductCount should take only numbers
         tvProductCount.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
@@ -184,7 +199,6 @@ public class NewBillController implements Initializable {
                 tvProductCount.setText("");
 
                 Purchase purchase = new Purchase(productName,productCount,productTax,productNetto);
-                purchaseList.add(purchase);
                 tablePurchasesView.getItems().add(purchase);
             }
         });
@@ -192,7 +206,7 @@ public class NewBillController implements Initializable {
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(),purchaseList);
+                Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(), tablePurchasesView.getItems());
                 FileDAO.saveToFile(bill);
             }
         });
