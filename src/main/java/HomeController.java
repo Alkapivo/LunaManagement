@@ -38,7 +38,7 @@ public class HomeController implements Initializable{
                 //blok try catch musimy dodać poniewać metoda FXMLLoader.load(..) wyrzuca wyjątek który musimy jakoś przechwycić
                 try{
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
-                    loader.setController(new NewBillController());
+                    loader.setController(new BillController());
                     Parent root = loader.load();
                     Scene scene = new Scene(root, 960, 540);
                     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
@@ -73,7 +73,7 @@ public class HomeController implements Initializable{
                 try{
                     Bill bill = FileDAO.loadFromFile();
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
-                    loader.setController(new NewBillController(bill));
+                    loader.setController(new BillController(bill));
                     Parent root = loader.load();
                     Scene scene = new Scene(root, 960, 540);
                     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
