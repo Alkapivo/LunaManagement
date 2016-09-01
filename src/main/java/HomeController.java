@@ -41,7 +41,7 @@ public class HomeController implements Initializable{
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
                     loader.setController(new BillController());
                     Parent root = loader.load();
-                    Scene scene = new Scene(root, 960, 540);
+                    Scene scene = new Scene(root, 1114, 640);
                     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
                     stage.setScene(scene);
                 }catch (IOException e){
@@ -75,7 +75,7 @@ public class HomeController implements Initializable{
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
                     loader.setController(new BillController(bill));
                     Parent root = loader.load();
-                    Scene scene = new Scene(root, 960, 540);
+                    Scene scene = new Scene(root, 1114, 640);
                     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
                     Stage stage = (Stage) button_bills_db.getScene().getWindow();
                     stage.setScene(scene);

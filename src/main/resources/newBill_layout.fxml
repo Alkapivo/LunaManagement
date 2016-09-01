@@ -1,57 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="640.0" minWidth="1114.0" prefHeight="640.0" prefWidth="1114.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane fx:id="paneNewBill" prefWidth="600.0">
+      <Pane prefHeight="30.0" prefWidth="1090.0">
          <children>
-            <Label layoutX="14.0" layoutY="-1.0" text="wystawiający" />
-            <TextField fx:id="tvCreatorName" layoutX="14.0" layoutY="13.0" />
-            <Label layoutX="177.0" layoutY="-3.0" text="data" />
-            <DatePicker fx:id="datePickerCreateDate" layoutX="177.0" layoutY="13.0" />
-            <Button fx:id="buttonStartBill" layoutX="361.0" layoutY="13.0" mnemonicParsing="false" text="dalej" />
-            <Button fx:id="buttonCancelBill" disable="true" layoutX="409.0" layoutY="13.0" mnemonicParsing="false" text="anuluj" />
+            <Label layoutX="12.0" prefHeight="34.0" prefWidth="310.0" text="Dane faktury" textFill="#00000080">
+               <font>
+                  <Font name="System Font Regular" size="28.0" />
+               </font>
+            </Label>
+            <Label layoutX="348.0" prefHeight="34.0" prefWidth="310.0" text="Dane produktu" textFill="#00000080">
+               <font>
+                  <Font name="System Font Regular" size="28.0" />
+               </font>
+            </Label>
+            <Label layoutX="784.0" prefHeight="34.0" prefWidth="310.0" text="Wskaźniki" textFill="#00000080">
+               <font>
+                  <Font name="System Font Regular" size="28.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
-      <Pane fx:id="paneAddPurchase" disable="true" prefWidth="600.0">
+      <Pane fx:id="paneNewBill" prefHeight="130.0" prefWidth="1090.0">
          <children>
-            <Label layoutX="14.0" prefHeight="17.0" prefWidth="149.0" text="Nazwa produktu" />
-            <TextField fx:id="tvProductName" layoutX="14.0" layoutY="17.0" />
-            <TextField fx:id="tvProductCount" layoutX="178.0" layoutY="17.0" prefHeight="25.0" prefWidth="48.0" />
-            <Label layoutX="178.0" prefHeight="17.0" prefWidth="48.0" text="Ilość" />
-            <Button fx:id="buttonAddPurchase" layoutX="410.0" layoutY="17.0" mnemonicParsing="false" text="dodaj" />
-            <TextField fx:id="tvProductTax" layoutX="241.0" layoutY="17.0" prefHeight="25.0" prefWidth="48.0" />
-            <Label layoutX="242.0" text="Podatek" />
-            <TextField fx:id="tvProductNetto" layoutX="300.0" layoutY="17.0" prefHeight="25.0" prefWidth="96.0" />
-            <Label layoutX="300.0" prefHeight="17.0" prefWidth="96.0" text="Cena netto" />
+            <Label layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="180.0" text="Nazwa faktury" />
+            <Label layoutX="14.0" layoutY="60.0" prefHeight="17.0" prefWidth="194.0" text="Data" />
+            <TextField fx:id="tvCreatorName" layoutX="14.0" layoutY="27.0" prefHeight="27.0" prefWidth="194.0" />
+            <DatePicker fx:id="datePickerCreateDate" layoutX="14.0" layoutY="77.0" />
+            <Button fx:id="buttonStartBill" layoutX="227.0" layoutY="27.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Zatwierdź" />
+            <Button fx:id="buttonCancelBill" disable="true" layoutX="227.0" layoutY="70.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Zmień" />
+            <Pane fx:id="paneAddPurchase" disable="true" layoutX="336.0" prefHeight="117.0" prefWidth="600.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="149.0" text="Nazwa produktu" />
+                  <Label layoutX="14.0" layoutY="60.0" prefHeight="17.0" prefWidth="54.0" text="Ilość" />
+                  <Label layoutX="220.0" layoutY="6.0" prefHeight="17.0" prefWidth="96.0" text="Cena netto" />
+                  <Label layoutX="220.0" layoutY="60.0" prefHeight="17.0" prefWidth="96.0" text="Cena ręczna" />
+                  <Label layoutX="146.0" layoutY="60.0" prefHeight="17.0" prefWidth="96.0" text="Marża (%)" />
+                  <Label layoutX="80.0" layoutY="60.0" prefHeight="17.0" prefWidth="54.0" text="VAT (%)" />
+                  <TextField fx:id="tvProductName" layoutX="14.0" layoutY="27.0" prefHeight="27.0" prefWidth="186.0" />
+                  <TextField fx:id="tvProductCount" layoutX="14.0" layoutY="77.0" prefHeight="27.0" prefWidth="54.0" />
+                  <TextField fx:id="tvProductTax" layoutX="80.0" layoutY="77.0" prefHeight="27.0" prefWidth="54.0" />
+                  <TextField fx:id="tvProductMargin" layoutX="146.0" layoutY="77.0" prefHeight="27.0" prefWidth="54.0" />
+                  <TextField fx:id="tvProductNetto" layoutX="220.0" layoutY="27.0" prefHeight="27.0" prefWidth="96.0" />
+                  <TextField fx:id="tvProductPrice" layoutX="220.0" layoutY="77.0" prefHeight="27.0" prefWidth="96.0" />
+                  <Button fx:id="buttonAddPurchase" layoutX="328.0" layoutY="27.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Dodaj" />
+                  <Button fx:id="buttonDelPurchase" layoutX="328.0" layoutY="69.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Usuń" />
+               </children>
+            </Pane>
+            <Pane fx:id="paneIndPurchase" layoutX="772.0" prefHeight="117.0" prefWidth="330.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="96.0" text="Jed. cena" />
+                  <Label layoutX="14.0" layoutY="59.0" prefHeight="17.0" prefWidth="96.0" text="Jed. cena r." />
+                  <Label layoutX="122.0" layoutY="6.0" prefHeight="17.0" prefWidth="96.0" text="Różnica" />
+                  <Label layoutX="122.0" layoutY="59.0" prefHeight="17.0" prefWidth="96.0" text="Różnica (%)" />
+                  <Label fx:id="indProductNetto" layoutX="14.0" layoutY="23.0" prefHeight="34.0" prefWidth="96.0" text="60.14">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="indProductPrice" layoutX="14.0" layoutY="76.0" prefHeight="34.0" prefWidth="96.0" text="80.27">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="indProductDiff" layoutX="122.0" layoutY="23.0" prefHeight="34.0" prefWidth="96.0" text="20.14">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="indProductDiffPercent" layoutX="122.0" layoutY="76.0" prefHeight="34.0" prefWidth="96.0" text="33%">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
          </children>
-         <padding>
-            <Insets bottom="32.0" />
-         </padding>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
       </Pane>
-      <Pane prefWidth="600.0">
+      <Pane fx:id="paneTableView" prefHeight="280.0" prefWidth="1090.0">
          <children>
-            <TableView fx:id="tablePurchasesView" prefHeight="200.0" prefWidth="600.0">
+            <TableView fx:id="tablePurchaseView" layoutX="14.0" prefHeight="280.0" prefWidth="1065.0">
               <columns>
-                <TableColumn fx:id="columnName" prefWidth="246.0" text="Nazwa produktu" />
-                <TableColumn fx:id="columnCount" prefWidth="67.0" text="Ilość" />
-                  <TableColumn fx:id="columnTax" prefWidth="82.0" text="Podatek" />
-                  <TableColumn fx:id="columnNetto" prefWidth="102.0" text="Cena netto" />
-                  <TableColumn fx:id="columnBrutto" prefWidth="102.0" text="Cena brutto" />
+                  <TableColumn fx:id="columnNo" maxWidth="256.0" minWidth="48.0" prefWidth="48.0" text="L.p." />
+                <TableColumn fx:id="columnName" maxWidth="256.0" minWidth="192.0" prefWidth="192.0" text="Nazwa produktu" />
+                <TableColumn fx:id="columnCount" maxWidth="256.0" minWidth="48.0" prefWidth="48.0" text="Ilość" />
+                  <TableColumn fx:id="columnNetto" maxWidth="256.0" prefWidth="90.0" text="Jed. netto" />
+                  <TableColumn fx:id="columnTax" maxWidth="256.0" minWidth="96.0" prefWidth="96.0" text="Jed. VAT [%]" />
+                  <TableColumn fx:id="columnNettoAll" maxWidth="256.0" minWidth="96.0" prefWidth="96.0" text="Netto" />
+                  <TableColumn fx:id="columnBrutto" maxWidth="256.0" minWidth="96.0" prefWidth="68.0" text="Jed. brutto" />
+                  <TableColumn fx:id="columnMargin" maxWidth="256.0" minWidth="108.0" prefWidth="96.0" text="Jed. Marża [%]" />
+                  <TableColumn fx:id="columnBruttoAll" maxWidth="256.0" minWidth="96.0" prefWidth="96.0" text="Jed. cena" />
+                  <TableColumn fx:id="columnPrice" maxWidth="256.0" minWidth="96.0" prefWidth="96.0" text="Jed. cena r." />
+                  <TableColumn fx:id="columnPriceAll" maxWidth="256.0" minWidth="97.0" prefWidth="97.0" text="Cena ręczna" />
               </columns>
             </TableView>
          </children>
+         <VBox.margin>
+            <Insets bottom="12.0" top="24.0" />
+         </VBox.margin>
       </Pane>
-      <Pane prefWidth="600.0">
+      <Pane prefHeight="60.0" prefWidth="936.0">
          <children>
-            <Label text="Suma:" />
-            <Label fx:id="labelSuma" layoutX="41.0" />
-            <Button fx:id="buttonSave" layoutX="527.0" layoutY="13.0" mnemonicParsing="false" text="Zapisz" />
+            <Label layoutX="14.0" layoutY="22.0" text="Suma:" />
+            <Label fx:id="labelSuma" layoutX="55.0" layoutY="22.0" />
          </children>
       </Pane>
+      <Pane prefHeight="52.0" prefWidth="936.0">
+         <children>
+            <Button fx:id="buttonSave" layoutX="14.0" layoutY="13.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="96.0" text="Zapisz" />
+            <Button layoutX="122.0" layoutY="13.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="96.0" text="Importuj" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="12.0" top="12.0" />
+         </VBox.margin>
+      </Pane>
    </children>
+   <padding>
+      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
 </VBox>
