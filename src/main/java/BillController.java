@@ -61,7 +61,7 @@ public class BillController implements Initializable {
 
     //Indicators view pane
     @FXML Pane paneIndPurchase;
-    @FXML Label indProductNetto;
+    @FXML Label indProductBrutto;
     @FXML Label indProductPrice;
     @FXML Label indProductDiff;
     @FXML Label indProductDiffPercent;
@@ -85,6 +85,21 @@ public class BillController implements Initializable {
         this.bill = bill;
     }
 
+    public void sumTable() {
+        //TODO wyswietlanie sumy netto i ceny recznej
+        int totalSumNettoSize = tablePurchaseView.getItems().size();
+        double totalSumNetto = 0;
+        double totalSumPrice = 0;
+        String sum;
+        for (int i=0; i<totalSumNettoSize; i++) {
+            sum = columnNettoAll.getCellObservableValue(i).getValue().toString();
+            totalSumNetto += Double.parseDouble(sum);
+            sum = columnPriceAll.getCellObservableValue(i).getValue().toString();
+            totalSumPrice += Double.parseDouble(sum);
+        }
+        sumNetto.setText(Double.toString(totalSumNetto)+" zł");
+        sumPrice.setText(Double.toString(totalSumPrice)+" zł");
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -136,10 +151,19 @@ public class BillController implements Initializable {
 
         //tvProductNetto should take only numbers (double)
         //TODO bug found - mozna wpisywac litery itd.
+        //TODO trzeba porzadnie zrobic aktualizacje wskaznikow, bo sa empty stringi no i nie da sie dodac produktu do listy wtedy
         tvProductNetto.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
             @Override
             public TextFormatter.Change apply(TextFormatter.Change change) {
                 if(change.getText().matches("[0-9]") || change.getText().matches("") || change.getText().matches(".")){
+                    /*
+                    double valNetto = Double.parseDouble(tvProductNetto.getText()+change.getText());
+                    double valTax = Double.parseDouble(tvProductTax.getText());
+                    double valMargin = Double.parseDouble(tvProductMargin.getText());
+                    double valBrutto = valNetto*(valTax/100.0)+valNetto*(valMargin/100.0)+valNetto;
+                    indProductBrutto.setText(Double.toString(valBrutto)+" zł");
+                    */
+                    //double valNetto = Double.parseDouble(tvProductNetto.getText()+change.getText());
                     return change;
                 }else
                     return null;
@@ -152,11 +176,22 @@ public class BillController implements Initializable {
             @Override
             public TextFormatter.Change apply(TextFormatter.Change change) {
                 if(change.getText().matches("[0-9]") || change.getText().matches("") || change.getText().matches(".")){
+                    /*
+                    double valPrice = Double.parseDouble(tvProductPrice.getText()+change.getText());
+                    double valDiff = valPrice-Double.parseDouble(tvProductNetto.getText());
+                    double valDiffPercent = (valDiff/100.0)*valPrice;
+                    indProductPrice.setText(Double.toString(valPrice)+" zł");
+                    indProductDiff.setText(Double.toString(valDiff)+" zł");
+                    indProductDiffPercent.setText(Double.toString(valDiffPercent)+"%");
+                    */
                     return change;
+
                 }else
                     return null;
             }
         }));
+
+
 
         buttonStartBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -173,7 +208,6 @@ public class BillController implements Initializable {
             }
         });
 
-        //TODO pasowaloby zrobic, że jesli
         buttonAddPurchase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -253,6 +287,8 @@ public class BillController implements Initializable {
 
                 Purchase purchase = new Purchase(productName,productCount,productTax,productMargin,productNetto,productPrice);
                 tablePurchaseView.getItems().add(purchase);
+
+                sumTable();
             }
         });
 
@@ -310,8 +346,6 @@ public class BillController implements Initializable {
         columnBruttoAll.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productBruttoPrice"));
         columnPrice.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productPrice"));
         columnPriceAll.setCellValueFactory(new PropertyValueFactory<Purchase, Integer>("productPriceAll"));
-
-        //TODO wyswietlanie sumy netto i ceny recznej
-
+        sumTable();
     }
 }

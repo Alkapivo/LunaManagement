@@ -57,26 +57,26 @@
             </Pane>
             <Pane fx:id="paneIndPurchase" layoutX="772.0" prefHeight="117.0" prefWidth="330.0">
                <children>
-                  <Label layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="96.0" text="Jed. cena" />
-                  <Label layoutX="14.0" layoutY="59.0" prefHeight="17.0" prefWidth="96.0" text="Jed. cena r." />
-                  <Label layoutX="122.0" layoutY="6.0" prefHeight="17.0" prefWidth="96.0" text="Różnica" />
-                  <Label layoutX="122.0" layoutY="59.0" prefHeight="17.0" prefWidth="96.0" text="Różnica (%)" />
-                  <Label fx:id="indProductNetto" layoutX="14.0" layoutY="23.0" prefHeight="34.0" prefWidth="96.0" text="60.23">
+                  <Label layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="138.0" text="Jed. cena" />
+                  <Label layoutX="14.0" layoutY="59.0" prefHeight="17.0" prefWidth="138.0" text="Jed. cena r." />
+                  <Label layoutX="177.0" layoutY="7.0" prefHeight="17.0" prefWidth="138.0" text="Różnica" />
+                  <Label layoutX="177.0" layoutY="60.0" prefHeight="17.0" prefWidth="138.0" text="Różnica (%)" />
+                  <Label fx:id="indProductNetto" layoutX="14.0" layoutY="23.0" prefHeight="34.0" prefWidth="138.0" text="-">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <Label fx:id="indProductPrice" layoutX="14.0" layoutY="76.0" prefHeight="34.0" prefWidth="96.0" text="99.00">
+                  <Label fx:id="indProductPrice" layoutX="14.0" layoutY="76.0" prefHeight="34.0" prefWidth="138.0" text="-">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <Label fx:id="indProductDiff" layoutX="122.0" layoutY="23.0" prefHeight="34.0" prefWidth="96.0" text="20.14">
+                  <Label fx:id="indProductDiff" layoutX="177.0" layoutY="24.0" prefHeight="34.0" prefWidth="138.0" text="-">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <Label fx:id="indProductDiffPercent" layoutX="122.0" layoutY="76.0" prefHeight="34.0" prefWidth="96.0" text="33%">
+                  <Label fx:id="indProductDiffPercent" layoutX="177.0" layoutY="77.0" prefHeight="34.0" prefWidth="138.0" text="-">
                      <font>
                         <Font size="24.0" />
                      </font>

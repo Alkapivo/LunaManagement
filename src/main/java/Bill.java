@@ -41,6 +41,15 @@ public class Bill implements Serializable {
         this.list = list;
     }
 
+    public double sumList() {
+        int listSize = list.size();
+        double sumTotal = 5;/*
+        for (int i=0; i<listSize; i++) {
+            sumTotal += list.get(i).getProductPriceAll();
+        }*/
+        return sumTotal;
+    }
+
     @Override
     public String toString() {
         String result = name+" "+date+" "+list;
