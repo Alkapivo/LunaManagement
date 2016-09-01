@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.util.Callback;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 
 
 
@@ -64,10 +68,14 @@ public class BillController implements Initializable {
 
 
     //Info view pane
-    //TODO suma itd.
+    @FXML Label sumNetto;
+    @FXML Label sumPrice;
 
     //File options pane
     @FXML Button buttonSave;
+    @FXML Button buttonExport;
+    @FXML Button buttonPrint;
+    @FXML Button buttonImport;
 
     private Bill bill;
 
@@ -92,6 +100,7 @@ public class BillController implements Initializable {
 
         }
 
+        //TODO pasowaloby to jakos uporzadkowac
         //tvProductCount should take only numbers (int)
         tvProductCount.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
             @Override
@@ -126,6 +135,7 @@ public class BillController implements Initializable {
         }));
 
         //tvProductNetto should take only numbers (double)
+        //TODO bug found - mozna wpisywac litery itd.
         tvProductNetto.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
             @Override
             public TextFormatter.Change apply(TextFormatter.Change change) {
@@ -137,6 +147,7 @@ public class BillController implements Initializable {
         }));
 
         //tvProductPrice should take only numbers (double)
+        //TODO bug found - mozna wpisywac litery itd.
         tvProductPrice.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
             @Override
             public TextFormatter.Change apply(TextFormatter.Change change) {
@@ -162,6 +173,7 @@ public class BillController implements Initializable {
             }
         });
 
+        //TODO pasowaloby zrobic, że jesli
         buttonAddPurchase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -244,12 +256,47 @@ public class BillController implements Initializable {
             }
         });
 
+        tablePurchaseView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+                //TODO ma zwracac dokladny obiekt, a nie pojedyncze wartosci z komorki
+                if(tablePurchaseView.getSelectionModel().getSelectedItem() != null)
+                {
+                    TableViewSelectionModel selectionModel = tablePurchaseView.getSelectionModel();
+                    ObservableList selectedCells = selectionModel.getSelectedCells();
+                    TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+                    Object val = tablePosition.getTableColumn();
+                    System.out.println("Selected Value" + val);
+                }
+            }
+        });
+
+        //TODO pasowaloby zrobic mozliwosc edycji danych, jesli jakis wiersz jest zaznaczony
+
+
+        buttonDelPurchase.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //TODO jeśli zaznaczony został obiekt z tablePurchaseView to go usun, jesli nie to ustaw button na disable
+            }
+        });
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
+                //TODO dodaj okienko zapisywania
                 Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(), new ArrayList(tablePurchaseView.getItems()));
                 FileDAO.saveToFile(bill);
+            }
+        });
+
+        //TODO pasowaloby zrobic eksport do pdf tablePurchaseView (i pozostale dane)
+
+        //TODO jak zrobi sie eksport do pdf-a to pasowaloby zrobic mozliwosc drukowania tego pdfa jednym kliknieciem
+
+
+        columnNo.setCellValueFactory(new Callback<CellDataFeatures<Purchase, Purchase>, ObservableValue<Purchase>>() {
+            @Override public ObservableValue<Purchase> call(CellDataFeatures<Purchase, Purchase> p) {
+                return new ReadOnlyObjectWrapper((tablePurchaseView.getItems().indexOf(p.getValue()))+1+".");
             }
         });
 
@@ -263,6 +310,8 @@ public class BillController implements Initializable {
         columnBruttoAll.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productBruttoPrice"));
         columnPrice.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productPrice"));
         columnPriceAll.setCellValueFactory(new PropertyValueFactory<Purchase, Integer>("productPriceAll"));
+
+        //TODO wyswietlanie sumy netto i ceny recznej
 
     }
 }

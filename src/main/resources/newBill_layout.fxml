@@ -61,12 +61,12 @@
                   <Label layoutX="14.0" layoutY="59.0" prefHeight="17.0" prefWidth="96.0" text="Jed. cena r." />
                   <Label layoutX="122.0" layoutY="6.0" prefHeight="17.0" prefWidth="96.0" text="Różnica" />
                   <Label layoutX="122.0" layoutY="59.0" prefHeight="17.0" prefWidth="96.0" text="Różnica (%)" />
-                  <Label fx:id="indProductNetto" layoutX="14.0" layoutY="23.0" prefHeight="34.0" prefWidth="96.0" text="60.14">
+                  <Label fx:id="indProductNetto" layoutX="14.0" layoutY="23.0" prefHeight="34.0" prefWidth="96.0" text="60.23">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <Label fx:id="indProductPrice" layoutX="14.0" layoutY="76.0" prefHeight="34.0" prefWidth="96.0" text="80.27">
+                  <Label fx:id="indProductPrice" layoutX="14.0" layoutY="76.0" prefHeight="34.0" prefWidth="96.0" text="99.00">
                      <font>
                         <Font size="24.0" />
                      </font>
@@ -88,9 +88,9 @@
             <Insets />
          </VBox.margin>
       </Pane>
-      <Pane fx:id="paneTableView" prefHeight="280.0" prefWidth="1090.0">
+      <Pane fx:id="paneTableView" prefHeight="393.0" prefWidth="1090.0">
          <children>
-            <TableView fx:id="tablePurchaseView" layoutX="14.0" prefHeight="280.0" prefWidth="1065.0">
+            <TableView fx:id="tablePurchaseView" layoutX="14.0" prefHeight="384.0" prefWidth="1065.0">
               <columns>
                   <TableColumn fx:id="columnNo" maxWidth="256.0" minWidth="48.0" prefWidth="48.0" text="L.p." />
                 <TableColumn fx:id="columnName" maxWidth="256.0" minWidth="192.0" prefWidth="192.0" text="Nazwa produktu" />
@@ -107,23 +107,27 @@
             </TableView>
          </children>
          <VBox.margin>
-            <Insets bottom="12.0" top="24.0" />
+            <Insets bottom="12.0" />
          </VBox.margin>
       </Pane>
       <Pane prefHeight="60.0" prefWidth="936.0">
          <children>
-            <Label layoutX="14.0" layoutY="22.0" text="Suma:" />
-            <Label fx:id="labelSuma" layoutX="55.0" layoutY="22.0" />
+            <Label layoutX="14.0" layoutY="5.0" text="Suma (netto)" />
+            <Label layoutX="206.0" layoutY="6.0" text="Suma (cena ręczna)" />
+            <Label fx:id="sumNetto" layoutX="14.0" layoutY="21.0" prefHeight="34.0" prefWidth="192.0" text="256.00 zł">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label fx:id="sumPrice" layoutX="206.0" layoutY="21.0" prefHeight="34.0" prefWidth="192.0" text="348.00 zł">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Button fx:id="buttonSave" layoutX="764.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Zapisz" />
+            <Button fx:id="buttonExport" layoutX="872.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Eksportuj" />
+            <Button fx:id="buttonPrint" layoutX="980.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Drukuj" />
          </children>
-      </Pane>
-      <Pane prefHeight="52.0" prefWidth="936.0">
-         <children>
-            <Button fx:id="buttonSave" layoutX="14.0" layoutY="13.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="96.0" text="Zapisz" />
-            <Button layoutX="122.0" layoutY="13.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="96.0" text="Importuj" />
-         </children>
-         <VBox.margin>
-            <Insets bottom="12.0" top="12.0" />
-         </VBox.margin>
       </Pane>
    </children>
    <padding>
