@@ -1,4 +1,5 @@
 import com.sun.org.apache.bcel.internal.generic.NEW;
+import com.sun.tools.internal.ws.wsdl.document.jaxws.Exception;
 import com.sun.tools.javac.util.Name;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
+import java.beans.PropertyChangeEvent;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ public class BillController implements Initializable {
     }
 
     public void sumTable() {
-        //TODO wyswietlanie sumy netto i ceny recznej
+        //CHECK TODO wyswietlanie sumy netto i ceny recznej
         int totalSumNettoSize = tablePurchaseView.getItems().size();
         double totalSumNetto = 0;
         double totalSumPrice = 0;
@@ -99,6 +101,55 @@ public class BillController implements Initializable {
         }
         sumNetto.setText(Double.toString(totalSumNetto)+" zł");
         sumPrice.setText(Double.toString(totalSumPrice)+" zł");
+    }
+
+    public void updateIndBrutto() {
+        String indTax = tvProductTax.getText();
+        String indMargin = tvProductMargin.getText();
+        String indNetto = tvProductNetto.getText();
+        double indBrutto = 0;
+
+        if (indTax.isEmpty())
+            indTax = "0";
+        if (indMargin.isEmpty())
+            indMargin = "0";
+        if (indNetto.isEmpty())
+            indNetto = "0";
+
+        indBrutto = Double.parseDouble(indNetto)*(Double.parseDouble(indTax)/100.0)+Double.parseDouble(indNetto)*(Double.parseDouble(indMargin)/100.0)+Double.parseDouble(indNetto);
+        indProductBrutto.setText(String.format("%.2f", indBrutto));
+
+        updateIndDiff();
+    }
+
+    public void updateIndDiff() {
+        String indBrutto = indProductBrutto.getText().replace(',', '.');
+        String indPrice = indProductPrice.getText().replace(',', '.');
+        if (indBrutto.isEmpty())
+            indBrutto = "0";
+        if (indPrice.isEmpty())
+            indPrice = "0";
+
+        double indDiff;
+        double indDiffP;
+        try {
+            indDiff = Double.parseDouble(indPrice)-Double.parseDouble(indBrutto);
+        }
+        catch (NumberFormatException e) {
+            indDiff = 0;
+        }
+        try {
+            if (Double.parseDouble(indPrice) != 0)
+                indDiffP = (indDiff/Double.parseDouble(indPrice))*100;
+            else
+                indDiffP = 0;
+        }
+        catch (NumberFormatException e) {
+            indDiffP = 0;
+        }
+
+        indProductDiff.setText(String.format("%.2f",indDiff));
+        indProductDiffPercent.setText(String.format("%.0f",indDiffP)+"%");
     }
 
     @Override
@@ -151,19 +202,11 @@ public class BillController implements Initializable {
 
         //tvProductNetto should take only numbers (double)
         //TODO bug found - mozna wpisywac litery itd.
-        //TODO trzeba porzadnie zrobic aktualizacje wskaznikow, bo sa empty stringi no i nie da sie dodac produktu do listy wtedy
         tvProductNetto.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
             @Override
             public TextFormatter.Change apply(TextFormatter.Change change) {
                 if(change.getText().matches("[0-9]") || change.getText().matches("") || change.getText().matches(".")){
-                    /*
-                    double valNetto = Double.parseDouble(tvProductNetto.getText()+change.getText());
-                    double valTax = Double.parseDouble(tvProductTax.getText());
-                    double valMargin = Double.parseDouble(tvProductMargin.getText());
-                    double valBrutto = valNetto*(valTax/100.0)+valNetto*(valMargin/100.0)+valNetto;
-                    indProductBrutto.setText(Double.toString(valBrutto)+" zł");
-                    */
-                    //double valNetto = Double.parseDouble(tvProductNetto.getText()+change.getText());
+                    //indProductBrutto.setText(change.getText());
                     return change;
                 }else
                     return null;
@@ -176,20 +219,43 @@ public class BillController implements Initializable {
             @Override
             public TextFormatter.Change apply(TextFormatter.Change change) {
                 if(change.getText().matches("[0-9]") || change.getText().matches("") || change.getText().matches(".")){
-                    /*
-                    double valPrice = Double.parseDouble(tvProductPrice.getText()+change.getText());
-                    double valDiff = valPrice-Double.parseDouble(tvProductNetto.getText());
-                    double valDiffPercent = (valDiff/100.0)*valPrice;
-                    indProductPrice.setText(Double.toString(valPrice)+" zł");
-                    indProductDiff.setText(Double.toString(valDiff)+" zł");
-                    indProductDiffPercent.setText(Double.toString(valDiffPercent)+"%");
-                    */
                     return change;
 
                 }else
                     return null;
             }
         }));
+
+        //CHECK TODO - aktualizowanie wskaznikow.
+        tvProductNetto.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
+        });
+        tvProductTax.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
+        });
+        tvProductMargin.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
+        });
+        indProductBrutto.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
+        });
+
+        tvProductPrice.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                String indPrice = tvProductPrice.getText().trim();
+                if (indPrice.isEmpty())
+                    indPrice = "0";
+                double indPriceD = Double.parseDouble(indPrice);
+                indProductPrice.setText(String.format("%.2f", indPriceD));
+                updateIndDiff();
+            }
+        });
+
 
 
 
