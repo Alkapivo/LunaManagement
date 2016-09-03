@@ -1,6 +1,8 @@
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.sun.org.apache.bcel.internal.generic.NEW;
-import com.sun.tools.internal.ws.wsdl.document.jaxws.Exception;
-import com.sun.tools.javac.util.Name;
+import com.sun.xml.internal.fastinfoset.util.StringArray;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -10,13 +12,18 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-
 import java.beans.PropertyChangeEvent;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
@@ -25,6 +32,13 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.util.Callback;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 public class BillController implements Initializable {
@@ -88,7 +102,6 @@ public class BillController implements Initializable {
     }
 
     public void sumTable() {
-        //CHECK TODO wyswietlanie sumy netto i ceny recznej
         int totalSumNettoSize = tablePurchaseView.getItems().size();
         double totalSumNetto = 0;
         double totalSumPrice = 0;
@@ -99,8 +112,10 @@ public class BillController implements Initializable {
             sum = columnPriceAll.getCellObservableValue(i).getValue().toString();
             totalSumPrice += Double.parseDouble(sum);
         }
-        sumNetto.setText(Double.toString(totalSumNetto)+" zł");
-        sumPrice.setText(Double.toString(totalSumPrice)+" zł");
+        sumNetto.setText(String.format("%.2f", totalSumNetto)+" zł");
+        sumPrice.setText(String.format("%.2f", totalSumPrice)+" zł");
+        //sumNetto.setText(Double.toString(totalSumNetto)+" zł");
+        //sumPrice.setText(Double.toString(totalSumPrice)+" zł");
     }
 
     public void updateIndBrutto() {
@@ -120,6 +135,43 @@ public class BillController implements Initializable {
         indProductBrutto.setText(String.format("%.2f", indBrutto));
 
         updateIndDiff();
+    }
+
+    public void typeTextFieldInt(TextField tv) {
+        tv.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
+            @Override
+            public TextFormatter.Change apply(TextFormatter.Change change) {
+                if(change.getText().matches("[0-9]") || change.getText().matches("")) {
+                    return change;
+                }else
+                    return null;
+            }
+        }));
+
+    }
+
+    public void typeTextFieldMoney(TextField tv) {
+        tv.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
+            @Override
+            public TextFormatter.Change apply(TextFormatter.Change change) {
+                String[] temp = tv.getText().split("\\.");
+
+                if (change.getText().equals(",")) {
+                    change.setText(".");
+                }
+                if(change.getText().matches("[0-9]") || change.getText().matches("") || change.getText().matches("\\.")) {
+                    if (tv.getText().contains(".") && change.getText().equals(".")) {
+                        return null;
+                    }
+                    if (temp.length > 1 && temp[1].length() >= 2 && !change.getText().matches("")) {
+                        return null;
+                    }
+                    return change;
+                }else
+                    return null;
+            }
+        }));
+
     }
 
     public void updateIndDiff() {
@@ -166,67 +218,12 @@ public class BillController implements Initializable {
 
         }
 
-        //TODO pasowaloby to jakos uporzadkowac
-        //tvProductCount should take only numbers (int)
-        tvProductCount.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
-            @Override
-            public TextFormatter.Change apply(TextFormatter.Change change) {
-                if(change.getText().matches("[0-9]") || change.getText().matches("")) {
-                    return change;
-                }else
-                return null;
-            }
-        }));
+        typeTextFieldInt(tvProductCount);
+        typeTextFieldInt(tvProductTax);
+        typeTextFieldInt(tvProductMargin);
+        typeTextFieldMoney(tvProductNetto);
+        typeTextFieldMoney(tvProductPrice);
 
-        //tvProductTax should take only numbers (int)
-        tvProductTax.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
-            @Override
-            public TextFormatter.Change apply(TextFormatter.Change change) {
-                if(change.getText().matches("[0-9]") || change.getText().matches("")) {
-                    return change;
-                }else
-                    return null;
-            }
-        }));
-
-        //tvProductMargin should take only numbers (int)
-        tvProductMargin.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
-            @Override
-            public TextFormatter.Change apply(TextFormatter.Change change) {
-                if(change.getText().matches("[0-9]") || change.getText().matches("")) {
-                    return change;
-                }else
-                    return null;
-            }
-        }));
-
-        //tvProductNetto should take only numbers (double)
-        //TODO bug found - mozna wpisywac litery itd.
-        tvProductNetto.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
-            @Override
-            public TextFormatter.Change apply(TextFormatter.Change change) {
-                if(change.getText().matches("[0-9]") || change.getText().matches("") || change.getText().matches(".")){
-                    //indProductBrutto.setText(change.getText());
-                    return change;
-                }else
-                    return null;
-            }
-        }));
-
-        //tvProductPrice should take only numbers (double)
-        //TODO bug found - mozna wpisywac litery itd.
-        tvProductPrice.setTextFormatter(new TextFormatter<Object>(new UnaryOperator<TextFormatter.Change>() {
-            @Override
-            public TextFormatter.Change apply(TextFormatter.Change change) {
-                if(change.getText().matches("[0-9]") || change.getText().matches("") || change.getText().matches(".")){
-                    return change;
-
-                }else
-                    return null;
-            }
-        }));
-
-        //CHECK TODO - aktualizowanie wskaznikow.
         tvProductNetto.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
@@ -243,7 +240,6 @@ public class BillController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
         });
-
         tvProductPrice.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -255,9 +251,6 @@ public class BillController implements Initializable {
                 updateIndDiff();
             }
         });
-
-
-
 
         buttonStartBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -361,40 +354,195 @@ public class BillController implements Initializable {
         tablePurchaseView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
-                //TODO ma zwracac dokladny obiekt, a nie pojedyncze wartosci z komorki
-                if(tablePurchaseView.getSelectionModel().getSelectedItem() != null)
-                {
-                    TableViewSelectionModel selectionModel = tablePurchaseView.getSelectionModel();
-                    ObservableList selectedCells = selectionModel.getSelectedCells();
-                    TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-                    Object val = tablePosition.getTableColumn();
-                    System.out.println("Selected Value" + val);
+                if(tablePurchaseView.getSelectionModel().getSelectedItem() != null) {
+                    int selectedRow = tablePurchaseView.getSelectionModel().getSelectedIndex();
                 }
+            }
+        });
+
+        buttonDelPurchase.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(tablePurchaseView.getSelectionModel().getSelectedItem() != null) {
+                    int selectedRow = tablePurchaseView.getSelectionModel().getSelectedIndex();
+                    tablePurchaseView.getItems().remove(selectedRow);
+                    sumTable();
+                }
+
             }
         });
 
         //TODO pasowaloby zrobic mozliwosc edycji danych, jesli jakis wiersz jest zaznaczony
 
-
-        buttonDelPurchase.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //TODO jeśli zaznaczony został obiekt z tablePurchaseView to go usun, jesli nie to ustaw button na disable
-            }
-        });
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //TODO dodaj okienko zapisywania
                 Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(), new ArrayList(tablePurchaseView.getItems()));
                 FileDAO.saveToFile(bill);
+
+
             }
         });
 
+
         //TODO pasowaloby zrobic eksport do pdf tablePurchaseView (i pozostale dane)
-
         //TODO jak zrobi sie eksport do pdf-a to pasowaloby zrobic mozliwosc drukowania tego pdfa jednym kliknieciem
+        buttonExport.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
 
+                // Get the row index where your value is stored
+
+                try {
+                    //Document document = new Document(PageSize.A4.rotate(), 24f, 56f, 56f, 24f);
+                    Document document = new Document(PageSize.A4,24f,24f, 36f, 36f);
+                    PdfWriter.getInstance(document, new FileOutputStream("test2.pdf"));
+                    document.open();
+
+                    int columnSize = tablePurchaseView.getColumns().size();
+                    int rowSize = tablePurchaseView.getItems().size();
+                    String billName = tvCreatorName.getText();
+                    String billDate = datePickerCreateDate.getValue().toString();
+                    String labelSumNetto = sumNetto.getText();
+                    String labelSumPrice = sumPrice.getText();
+
+                    Paragraph pCell;
+                    PdfPCell cell;
+                    String cellData;
+
+                    PdfPTable table = new PdfPTable(columnSize);
+                    table.setWidths(new float[] { 5,18,5,9,9,9,9,9,9,9,9 });
+                    table.setWidthPercentage(100f);
+
+                    BaseFont helvetica = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
+                    Font columnFont = new Font(helvetica, 8, Font.BOLD);
+                    Font cellFont = new Font(helvetica, 8, Font.NORMAL);
+                    Font titleFont = new Font(helvetica, 16, Font.NORMAL);
+                    Font dateFont = new Font(helvetica, 13, Font.NORMAL, BaseColor.GRAY);
+
+                    String[] columnNames = {"L.p.", "Nazwa produktu", "Ilość", "Jed. netto", "Jed. VAT [%]", "Netto", "Jed. brutto", "Jed. marża", "Jed. cena", "Jed. cena r.", "Cena ręczna"};
+                    TableColumn[] columnLabel = {columnNo, columnName, columnCount, columnNetto, columnTax, columnNettoAll, columnBrutto, columnMargin, columnBruttoAll, columnPrice, columnPriceAll};
+
+
+                    PdfPTable head = new PdfPTable(3);
+                    head.setWidthPercentage(100f);
+
+                        pCell = new Paragraph(billName, titleFont);
+                        pCell.setAlignment(Element.ALIGN_LEFT);
+                        cell = new PdfPCell();
+                        cell.setBorderWidth(0f);
+                        cell.addElement(pCell);
+                        head.addCell(cell);
+
+                        cell = new PdfPCell();
+                        cell.setBorderWidth(0f);
+                        head.addCell(cell);
+
+                        pCell = new Paragraph(billDate, dateFont);
+                        pCell.setAlignment(Element.ALIGN_RIGHT);
+                        cell = new PdfPCell();
+                        cell.setBorderWidth(0f);
+                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                        cell.addElement(pCell);
+                        head.addCell(cell);
+
+                    head.setSpacingAfter(6f);
+                    document.add(head);
+
+                    LineSeparator ls = new LineSeparator(0.5F,100f,BaseColor.DARK_GRAY,Element.ALIGN_BASELINE,0f);
+                    document.add(new Chunk(ls));
+
+                    for (int i=0; i<columnSize; i++) {
+                        cellData = columnNames[i];
+                        pCell = new Paragraph(cellData, columnFont);
+                        cell = new PdfPCell();
+                        cell.setBackgroundColor(BaseColor.GRAY);
+                        pCell.setAlignment(Element.ALIGN_CENTER);
+                        cell.addElement(pCell);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidth(0.5f);
+                        cell.setBorderColor(BaseColor.DARK_GRAY);
+
+                        table.addCell(cell);
+                    }
+
+                    for (int i=0; i<rowSize; i++) {
+                        for (int j=0; j<columnSize; j++) {
+                            cellData = columnLabel[j].getCellData(i).toString();
+                            pCell = new Paragraph(cellData, cellFont);
+                            cell = new PdfPCell();
+
+                            if((i%2)==0)
+                                cell.setBackgroundColor(BaseColor.WHITE);
+                            else
+                                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+
+                            pCell.setAlignment(Element.ALIGN_LEFT);
+                            cell.addElement(pCell);
+                            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                            cell.setBorderWidth(0.25f);
+                            cell.setBorderColor(BaseColor.DARK_GRAY);
+                            table.addCell(cell);
+                        }
+                    }
+
+                    table.setSpacingBefore(10f);
+                    table.setSpacingAfter(10f);
+                    document.add(table);
+
+                    document.add(new Chunk(ls));
+
+                    PdfPTable footer = new PdfPTable(4);
+                    footer.setWidthPercentage(100f);
+
+                        pCell = new Paragraph("Suma netto: ", dateFont);
+                        pCell.setAlignment(Element.ALIGN_LEFT);
+                        cell = new PdfPCell();
+                        cell.setBorderWidth(0f);
+                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                        cell.addElement(pCell);
+                        footer.addCell(cell);
+
+                        pCell = new Paragraph(labelSumNetto, titleFont);
+                        pCell.setAlignment(Element.ALIGN_LEFT);
+                        cell = new PdfPCell();
+                        cell.setBorderWidth(0f);
+                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                        cell.addElement(pCell);
+                        footer.addCell(cell);
+
+                        pCell = new Paragraph("Suma całkowita: ", dateFont);
+                        pCell.setAlignment(Element.ALIGN_LEFT);
+                        cell = new PdfPCell();
+                        cell.setBorderWidth(0f);
+                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                        cell.addElement(pCell);
+                        footer.addCell(cell);
+
+                        pCell = new Paragraph(labelSumPrice, titleFont);
+                        pCell.setAlignment(Element.ALIGN_LEFT);
+                        cell = new PdfPCell();
+                        cell.setBorderWidth(0f);
+                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                        cell.addElement(pCell);
+                        footer.addCell(cell);
+
+                    footer.setSpacingAfter(10f);
+                    document.add(footer);
+
+                    document.add(new Chunk(ls));
+
+                    document.close();
+                }
+                catch (DocumentException d) {
+                    System.out.println("0");
+                }
+                catch (IOException e) {
+                    System.out.println("1");
+                }
+            }
+        });
 
         columnNo.setCellValueFactory(new Callback<CellDataFeatures<Purchase, Purchase>, ObservableValue<Purchase>>() {
             @Override public ObservableValue<Purchase> call(CellDataFeatures<Purchase, Purchase> p) {
@@ -413,5 +561,23 @@ public class BillController implements Initializable {
         columnPrice.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productPrice"));
         columnPriceAll.setCellValueFactory(new PropertyValueFactory<Purchase, Integer>("productPriceAll"));
         sumTable();
+
+
+
+
+        tablePurchaseView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                if (t.getClickCount() == 2) {
+                    int index = tablePurchaseView.getSelectionModel().getSelectedIndex();
+                    tablePurchaseView.getEditingCell();
+                    System.out.println(Integer.toString(index));
+                    /*
+                    if (listener != null) {
+                        listener.doubleClicked(tableViewObject.this,getSelectedItem());
+                    }*/
+                }
+            }
+        });
     }
 }

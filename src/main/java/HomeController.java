@@ -3,12 +3,22 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.*;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -20,52 +30,43 @@ import java.util.ResourceBundle;
 public class HomeController implements Initializable{
 
     @FXML
-    Button button_new_bill;
+    Hyperlink hyperlinkNewBill;
 
     @FXML
-    Button button_toys_db;
+    Hyperlink hyperlinkLoadBill;
 
     @FXML
-    Button button_bills_db;
+    Canvas canvasLogo;
+
+    @FXML
+    Pane paneLogo;
+
 
     public void initialize(URL location, ResourceBundle resources) {
-        button_new_bill.setOnAction(new EventHandler<ActionEvent>() {
+        hyperlinkNewBill.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
             public void handle(ActionEvent event) {
-                // Z dokumentacji wyczytałem, że getWindow() zwraca Window natomiast
-                // Window extends Stage więc możemy rzutować tak o:
-                Stage stage = (Stage) button_new_bill.getScene().getWindow();
-                //mamy stagea na którym pracujemy więc teraz ustawiamy mu nową scene
-                // (najpierw ją tworzymy, podobnie jak w Main tylko dajemy inny fxml(no inny 'ekran')
-                //blok try catch musimy dodać poniewać metoda FXMLLoader.load(..) wyrzuca wyjątek który musimy jakoś przechwycić
-                try{
+                System.out.println("lol");
+                Stage stage = (Stage) hyperlinkNewBill.getScene().getWindow();
+                try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
                     loader.setController(new BillController());
                     Parent root = loader.load();
                     Scene scene = new Scene(root, 1114, 640);
                     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
                     stage.setScene(scene);
-                }catch (IOException e){
-                    System.out.println("HEJ! BŁĄD W CHUJ, CHYBA NIE ZANALAZŁO PLIKU FXML Z LAYOUTEM DO OTWARCIA " +
-                            "ALBO NIE MASZ DO NIEGO DOSTĘPU " +
-                            "ALBO COS INNEGO SIE ZJEBAŁO XDD");
+                }
+                catch (IOException e) {
+                    System.out.println("Exception homectrl");
                     e.printStackTrace();
                 }
             }
         });
 
-        button_toys_db.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {
-                // TODO: 2016-08-26 go to toys database
-            }
-        });
-
-        /**
-         * Dokładnie to samo co dwa powyższe przypadki, ustawiamy eventhandlera do przechwytywania eventów na przycisku -
-         * czyli np zwyczajnych kliknięć. Tutaj robimy to samo za pomocą lambdy <3
-         */
-        button_bills_db.setOnAction(new EventHandler<ActionEvent>() {
+        hyperlinkLoadBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                System.out.println("lo2l");
                 FileChooser chooser = new FileChooser();
                 chooser.setTitle("Open File");
                 File fileToOpen = chooser.showOpenDialog(new Stage());
@@ -77,7 +78,7 @@ public class HomeController implements Initializable{
                     Parent root = loader.load();
                     Scene scene = new Scene(root, 1114, 640);
                     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-                    Stage stage = (Stage) button_bills_db.getScene().getWindow();
+                    Stage stage = (Stage) hyperlinkNewBill.getScene().getWindow();
                     stage.setScene(scene);
                 }catch (IOException e){
                     e.printStackTrace();
@@ -85,5 +86,8 @@ public class HomeController implements Initializable{
 
             }
         });
+        Image logoLuna = new Image(getClass().getResourceAsStream("logoLunaApp.png"));
+        canvasLogo.getGraphicsContext2D().drawImage(logoLuna,0,0);
+        paneLogo.setStyle("-fx-background-color: #34485b;");
     }
 }
