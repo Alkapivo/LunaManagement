@@ -43,10 +43,12 @@ public class HomeController implements Initializable{
 
 
     public void initialize(URL location, ResourceBundle resources) {
+
+        //Loading settings
+
         hyperlinkNewBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("lol");
                 Stage stage = (Stage) hyperlinkNewBill.getScene().getWindow();
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
@@ -66,7 +68,6 @@ public class HomeController implements Initializable{
         hyperlinkLoadBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("lo2l");
                 FileChooser chooser = new FileChooser();
                 chooser.setTitle("Open File");
                 File fileToOpen = chooser.showOpenDialog(new Stage());

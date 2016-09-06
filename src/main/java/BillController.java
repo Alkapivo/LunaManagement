@@ -204,6 +204,155 @@ public class BillController implements Initializable {
         indProductDiffPercent.setText(String.format("%.0f",indDiffP)+"%");
     }
 
+    public void createPDF() {
+        try {
+            //Document document = new Document(PageSize.A4.rotate(), 24f, 56f, 56f, 24f);
+            Document document = new Document(PageSize.A4,24f,24f, 36f, 36f);
+            PdfWriter.getInstance(document, new FileOutputStream("test2.pdf"));
+            document.open();
+
+            int columnSize = tablePurchaseView.getColumns().size();
+            int rowSize = tablePurchaseView.getItems().size();
+            String billName = tvCreatorName.getText();
+            String billDate = datePickerCreateDate.getValue().toString();
+            String labelSumNetto = sumNetto.getText();
+            String labelSumPrice = sumPrice.getText();
+
+            Paragraph pCell;
+            PdfPCell cell;
+            String cellData;
+
+            PdfPTable table = new PdfPTable(columnSize);
+            table.setWidths(new float[] { 5,18,5,9,9,9,9,9,9,9,9 });
+            table.setWidthPercentage(100f);
+
+            BaseFont helvetica = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
+            Font columnFont = new Font(helvetica, 8, Font.BOLD);
+            Font cellFont = new Font(helvetica, 8, Font.NORMAL);
+            Font titleFont = new Font(helvetica, 16, Font.NORMAL);
+            Font dateFont = new Font(helvetica, 13, Font.NORMAL, BaseColor.GRAY);
+
+            String[] columnNames = {"L.p.", "Nazwa produktu", "Ilość", "Jed. netto", "Jed. VAT [%]", "Netto", "Jed. brutto", "Jed. marża [%]", "Jed. cena", "Jed. cena r.", "Cena ręczna"};
+            TableColumn[] columnLabel = {columnNo, columnName, columnCount, columnNetto, columnTax, columnNettoAll, columnBrutto, columnMargin, columnBruttoAll, columnPrice, columnPriceAll};
+
+            PdfPTable head = new PdfPTable(3);
+            head.setWidthPercentage(100f);
+
+            pCell = new Paragraph(billName, titleFont);
+            pCell.setAlignment(Element.ALIGN_LEFT);
+            cell = new PdfPCell();
+            cell.setBorderWidth(0f);
+            cell.addElement(pCell);
+            head.addCell(cell);
+
+            cell = new PdfPCell();
+            cell.setBorderWidth(0f);
+            head.addCell(cell);
+
+            pCell = new Paragraph(billDate, dateFont);
+            pCell.setAlignment(Element.ALIGN_RIGHT);
+            cell = new PdfPCell();
+            cell.setBorderWidth(0f);
+            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+            cell.addElement(pCell);
+            head.addCell(cell);
+
+            head.setSpacingAfter(6f);
+            document.add(head);
+
+            LineSeparator ls = new LineSeparator(0.5F,100f,BaseColor.DARK_GRAY,Element.ALIGN_BASELINE,0f);
+            document.add(new Chunk(ls));
+
+            for (int i=0; i<columnSize; i++) {
+                cellData = columnNames[i];
+                pCell = new Paragraph(cellData, columnFont);
+                cell = new PdfPCell();
+                cell.setBackgroundColor(BaseColor.GRAY);
+                pCell.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(pCell);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorderWidth(0.5f);
+                cell.setBorderColor(BaseColor.DARK_GRAY);
+
+                table.addCell(cell);
+            }
+
+            for (int i=0; i<rowSize; i++) {
+                for (int j=0; j<columnSize; j++) {
+                    cellData = columnLabel[j].getCellData(i).toString();
+                    pCell = new Paragraph(cellData, cellFont);
+                    cell = new PdfPCell();
+
+                    if((i%2)==0)
+                        cell.setBackgroundColor(BaseColor.WHITE);
+                    else
+                        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+
+                    pCell.setAlignment(Element.ALIGN_LEFT);
+                    cell.addElement(pCell);
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setBorderWidth(0.25f);
+                    cell.setBorderColor(BaseColor.DARK_GRAY);
+                    table.addCell(cell);
+                }
+            }
+
+            table.setSpacingBefore(10f);
+            table.setSpacingAfter(10f);
+            document.add(table);
+
+            document.add(new Chunk(ls));
+
+            PdfPTable footer = new PdfPTable(4);
+            footer.setWidthPercentage(100f);
+
+            pCell = new Paragraph("Suma netto: ", dateFont);
+            pCell.setAlignment(Element.ALIGN_LEFT);
+            cell = new PdfPCell();
+            cell.setBorderWidth(0f);
+            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+            cell.addElement(pCell);
+            footer.addCell(cell);
+
+            pCell = new Paragraph(labelSumNetto, titleFont);
+            pCell.setAlignment(Element.ALIGN_LEFT);
+            cell = new PdfPCell();
+            cell.setBorderWidth(0f);
+            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+            cell.addElement(pCell);
+            footer.addCell(cell);
+
+            pCell = new Paragraph("Suma całkowita: ", dateFont);
+            pCell.setAlignment(Element.ALIGN_LEFT);
+            cell = new PdfPCell();
+            cell.setBorderWidth(0f);
+            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+            cell.addElement(pCell);
+            footer.addCell(cell);
+
+            pCell = new Paragraph(labelSumPrice, titleFont);
+            pCell.setAlignment(Element.ALIGN_LEFT);
+            cell = new PdfPCell();
+            cell.setBorderWidth(0f);
+            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+            cell.addElement(pCell);
+            footer.addCell(cell);
+
+            footer.setSpacingAfter(10f);
+            document.add(footer);
+
+            document.add(new Chunk(ls));
+
+            document.close();
+        }
+        catch (DocumentException d) {
+            System.out.println("0");
+        }
+        catch (IOException e) {
+            System.out.println("1");
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if(bill == null) {
@@ -373,7 +522,6 @@ public class BillController implements Initializable {
         });
 
         //TODO pasowaloby zrobic mozliwosc edycji danych, jesli jakis wiersz jest zaznaczony
-
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -385,162 +533,12 @@ public class BillController implements Initializable {
             }
         });
 
-
         //TODO pasowaloby zrobic eksport do pdf tablePurchaseView (i pozostale dane)
         //TODO jak zrobi sie eksport do pdf-a to pasowaloby zrobic mozliwosc drukowania tego pdfa jednym kliknieciem
         buttonExport.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
-                // Get the row index where your value is stored
-
-                try {
-                    //Document document = new Document(PageSize.A4.rotate(), 24f, 56f, 56f, 24f);
-                    Document document = new Document(PageSize.A4,24f,24f, 36f, 36f);
-                    PdfWriter.getInstance(document, new FileOutputStream("test2.pdf"));
-                    document.open();
-
-                    int columnSize = tablePurchaseView.getColumns().size();
-                    int rowSize = tablePurchaseView.getItems().size();
-                    String billName = tvCreatorName.getText();
-                    String billDate = datePickerCreateDate.getValue().toString();
-                    String labelSumNetto = sumNetto.getText();
-                    String labelSumPrice = sumPrice.getText();
-
-                    Paragraph pCell;
-                    PdfPCell cell;
-                    String cellData;
-
-                    PdfPTable table = new PdfPTable(columnSize);
-                    table.setWidths(new float[] { 5,18,5,9,9,9,9,9,9,9,9 });
-                    table.setWidthPercentage(100f);
-
-                    BaseFont helvetica = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
-                    Font columnFont = new Font(helvetica, 8, Font.BOLD);
-                    Font cellFont = new Font(helvetica, 8, Font.NORMAL);
-                    Font titleFont = new Font(helvetica, 16, Font.NORMAL);
-                    Font dateFont = new Font(helvetica, 13, Font.NORMAL, BaseColor.GRAY);
-
-                    String[] columnNames = {"L.p.", "Nazwa produktu", "Ilość", "Jed. netto", "Jed. VAT [%]", "Netto", "Jed. brutto", "Jed. marża", "Jed. cena", "Jed. cena r.", "Cena ręczna"};
-                    TableColumn[] columnLabel = {columnNo, columnName, columnCount, columnNetto, columnTax, columnNettoAll, columnBrutto, columnMargin, columnBruttoAll, columnPrice, columnPriceAll};
-
-
-                    PdfPTable head = new PdfPTable(3);
-                    head.setWidthPercentage(100f);
-
-                        pCell = new Paragraph(billName, titleFont);
-                        pCell.setAlignment(Element.ALIGN_LEFT);
-                        cell = new PdfPCell();
-                        cell.setBorderWidth(0f);
-                        cell.addElement(pCell);
-                        head.addCell(cell);
-
-                        cell = new PdfPCell();
-                        cell.setBorderWidth(0f);
-                        head.addCell(cell);
-
-                        pCell = new Paragraph(billDate, dateFont);
-                        pCell.setAlignment(Element.ALIGN_RIGHT);
-                        cell = new PdfPCell();
-                        cell.setBorderWidth(0f);
-                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-                        cell.addElement(pCell);
-                        head.addCell(cell);
-
-                    head.setSpacingAfter(6f);
-                    document.add(head);
-
-                    LineSeparator ls = new LineSeparator(0.5F,100f,BaseColor.DARK_GRAY,Element.ALIGN_BASELINE,0f);
-                    document.add(new Chunk(ls));
-
-                    for (int i=0; i<columnSize; i++) {
-                        cellData = columnNames[i];
-                        pCell = new Paragraph(cellData, columnFont);
-                        cell = new PdfPCell();
-                        cell.setBackgroundColor(BaseColor.GRAY);
-                        pCell.setAlignment(Element.ALIGN_CENTER);
-                        cell.addElement(pCell);
-                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                        cell.setBorderWidth(0.5f);
-                        cell.setBorderColor(BaseColor.DARK_GRAY);
-
-                        table.addCell(cell);
-                    }
-
-                    for (int i=0; i<rowSize; i++) {
-                        for (int j=0; j<columnSize; j++) {
-                            cellData = columnLabel[j].getCellData(i).toString();
-                            pCell = new Paragraph(cellData, cellFont);
-                            cell = new PdfPCell();
-
-                            if((i%2)==0)
-                                cell.setBackgroundColor(BaseColor.WHITE);
-                            else
-                                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-
-                            pCell.setAlignment(Element.ALIGN_LEFT);
-                            cell.addElement(pCell);
-                            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                            cell.setBorderWidth(0.25f);
-                            cell.setBorderColor(BaseColor.DARK_GRAY);
-                            table.addCell(cell);
-                        }
-                    }
-
-                    table.setSpacingBefore(10f);
-                    table.setSpacingAfter(10f);
-                    document.add(table);
-
-                    document.add(new Chunk(ls));
-
-                    PdfPTable footer = new PdfPTable(4);
-                    footer.setWidthPercentage(100f);
-
-                        pCell = new Paragraph("Suma netto: ", dateFont);
-                        pCell.setAlignment(Element.ALIGN_LEFT);
-                        cell = new PdfPCell();
-                        cell.setBorderWidth(0f);
-                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-                        cell.addElement(pCell);
-                        footer.addCell(cell);
-
-                        pCell = new Paragraph(labelSumNetto, titleFont);
-                        pCell.setAlignment(Element.ALIGN_LEFT);
-                        cell = new PdfPCell();
-                        cell.setBorderWidth(0f);
-                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-                        cell.addElement(pCell);
-                        footer.addCell(cell);
-
-                        pCell = new Paragraph("Suma całkowita: ", dateFont);
-                        pCell.setAlignment(Element.ALIGN_LEFT);
-                        cell = new PdfPCell();
-                        cell.setBorderWidth(0f);
-                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-                        cell.addElement(pCell);
-                        footer.addCell(cell);
-
-                        pCell = new Paragraph(labelSumPrice, titleFont);
-                        pCell.setAlignment(Element.ALIGN_LEFT);
-                        cell = new PdfPCell();
-                        cell.setBorderWidth(0f);
-                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-                        cell.addElement(pCell);
-                        footer.addCell(cell);
-
-                    footer.setSpacingAfter(10f);
-                    document.add(footer);
-
-                    document.add(new Chunk(ls));
-
-                    document.close();
-                }
-                catch (DocumentException d) {
-                    System.out.println("0");
-                }
-                catch (IOException e) {
-                    System.out.println("1");
-                }
+                createPDF();
             }
         });
 
