@@ -19,7 +19,7 @@ public class FileDAO {
     public static Bill loadFromFile(File fileToOpen) {
         try {
             ObjectInputStream load = new ObjectInputStream(new FileInputStream(fileToOpen));
-            Bill bill = (Bill)load.readObject();
+            Bill bill = (Bill) load.readObject();
             load.close();
             return bill;
         }
