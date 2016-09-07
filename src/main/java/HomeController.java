@@ -68,9 +68,8 @@ public class HomeController implements Initializable{
         hyperlinkLoadBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                FileChooser chooser = new FileChooser();
-                chooser.setTitle("Open File");
-                File fileToOpen = chooser.showOpenDialog(new Stage());
+                File filen = new File(".");
+                File fileToOpen = ChooseWindow.openFile("Otwórz fakturę", filen);
 
                 try{
                     Bill bill = FileDAO.loadFromFile(fileToOpen);

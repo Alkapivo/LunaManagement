@@ -38,7 +38,6 @@
                      </font>
                   </Label>
                   <Hyperlink layoutX="20.0" layoutY="54.0" text="Drukuj fakturę" />
-                  <Hyperlink layoutX="20.0" layoutY="77.0" text="Eksportuj fakturę do PDF" />
                </children>
             </Pane>
             <Pane layoutX="693.0" layoutY="5.0" prefHeight="126.0" prefWidth="272.0">

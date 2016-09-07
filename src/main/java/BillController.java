@@ -1,44 +1,29 @@
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.*;
-import com.itextpdf.text.pdf.draw.LineSeparator;
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import com.sun.xml.internal.fastinfoset.util.StringArray;
+import javafx.fxml.FXML;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import java.beans.PropertyChangeEvent;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
+import java.awt.print.PrinterJob;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.util.Callback;
-import javafx.scene.control.TableView.TableViewSelectionModel;
+import java.awt.print.PrinterException;
+import org.apache.pdfbox.pdmodel.PDDocument;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.print.PrintService;
 
 
 public class BillController implements Initializable {
@@ -228,18 +213,22 @@ public class BillController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
         });
+
         tvProductTax.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
         });
+
         tvProductMargin.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
         });
+
         indProductBrutto.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
         });
+
         tvProductPrice.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -351,15 +340,6 @@ public class BillController implements Initializable {
             }
         });
 
-        tablePurchaseView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
-                if(tablePurchaseView.getSelectionModel().getSelectedItem() != null) {
-                    int selectedRow = tablePurchaseView.getSelectionModel().getSelectedIndex();
-                }
-            }
-        });
-
         buttonDelPurchase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -372,7 +352,6 @@ public class BillController implements Initializable {
             }
         });
 
-        //TODO pasowaloby zrobic mozliwosc edycji danych, jesli jakis wiersz jest zaznaczony
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -384,8 +363,6 @@ public class BillController implements Initializable {
             }
         });
 
-        //TODO pasowaloby zrobic eksport do pdf tablePurchaseView (i pozostale dane)
-        //TODO jak zrobi sie eksport do pdf-a to pasowaloby zrobic mozliwosc drukowania tego pdfa jednym kliknieciem
         buttonExport.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -394,6 +371,25 @@ public class BillController implements Initializable {
                                         datePickerCreateDate.getValue().toString(),
                                         sumNetto.getText(),
                                         sumPrice.getText());
+            }
+        });
+
+        buttonPrint.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                PrintService service = PDFPrint.choosePrinter();
+                PDFPrint.printPDF("test2.pdf", service);
+            }
+        });
+
+
+
+        tablePurchaseView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+                if(tablePurchaseView.getSelectionModel().getSelectedItem() != null) {
+                    int selectedRow = tablePurchaseView.getSelectionModel().getSelectedIndex();
+                }
             }
         });
 
@@ -414,23 +410,5 @@ public class BillController implements Initializable {
         columnPrice.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productPrice"));
         columnPriceAll.setCellValueFactory(new PropertyValueFactory<Purchase, Integer>("productPriceAll"));
         sumTable();
-
-
-
-
-        tablePurchaseView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (t.getClickCount() == 2) {
-                    int index = tablePurchaseView.getSelectionModel().getSelectedIndex();
-                    tablePurchaseView.getEditingCell();
-                    System.out.println(Integer.toString(index));
-                    /*
-                    if (listener != null) {
-                        listener.doubleClicked(tableViewObject.this,getSelectedItem());
-                    }*/
-                }
-            }
-        });
     }
 }
