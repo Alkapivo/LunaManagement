@@ -47,11 +47,11 @@ public class Settings {
     }
 
     public static void setHomeDirectory(File homeDir) {
-        homeDirectory = new File(homeDir.toString());
+        homeDirectory = new File(homeDir.getParent());
         saveSettings();
     }
     public static void setRecentDirectory(File recentDir) {
-        recentDirectory = new File(recentDir.toString());
+        recentDirectory = new File(recentDir.getParent());
         saveSettings();
     }
 

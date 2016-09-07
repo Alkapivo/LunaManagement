@@ -363,7 +363,7 @@ public class BillController implements Initializable {
         buttonExport.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                File fileToSave = OpenDialog.saveFile("Zapisz fakturę", Settings.getRecentDirectory());
+                File fileToSave = OpenDialog.saveFile("Eksportuj fakturę", Settings.getRecentDirectory());
                 Settings.setRecentDirectory(fileToSave);
                 PDFCreator.createPDF(tablePurchaseView,tvCreatorName.getText(),datePickerCreateDate.getValue().toString(),sumNetto.getText(),sumPrice.getText(),fileToSave);
             }
@@ -383,8 +383,6 @@ public class BillController implements Initializable {
                 }
             }
         });
-
-
 
         tablePurchaseView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
