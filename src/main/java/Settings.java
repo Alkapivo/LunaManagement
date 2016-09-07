@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Settings {
     private static File homeDirectory;
     private static File recentDirectory;
@@ -14,10 +15,9 @@ public class Settings {
 
     public static void loadSettings() {
         try {
-            ObjectInputStream load = new ObjectInputStream(new FileInputStream("settings.txt"));
+            ObjectInputStream load = new ObjectInputStream(new FileInputStream("settings"));
             settingsList = (ArrayList) load.readObject();
             load.close();
-            System.out.println(settingsList.get(0).toString()+"\n"+settingsList.get(1).toString());
         }
         catch (IOException e) {
             saveSettings();
@@ -35,7 +35,7 @@ public class Settings {
         settingsList.add(0,homeDirectory);
         settingsList.add(1,recentDirectory);
         try {
-            ObjectOutputStream save = new ObjectOutputStream(new FileOutputStream("settings.txt"));
+            ObjectOutputStream save = new ObjectOutputStream(new FileOutputStream("settings"));
             save.writeObject(settingsList);
             save.flush();
             save.close();

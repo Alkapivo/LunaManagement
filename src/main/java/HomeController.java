@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+
 public class HomeController implements Initializable{
 
     @FXML Hyperlink hyperlinkNewBill;
@@ -33,56 +34,64 @@ public class HomeController implements Initializable{
     @FXML Button buttonOpen;
 
 
+    public void createBillWindow() {
+        Stage stage = (Stage) hyperlinkNewBill.getScene().getWindow();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
+            loader.setController(new BillController());
+            Parent root = loader.load();
+            Scene scene = new Scene(root, 1114, 640);
+            stage.setScene(scene);
+            stage.setResizable(false);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createLoadedBillWindow(File fileToOpen) {
+        try{
+            Bill bill = FileDAO.loadFromFile(fileToOpen);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
+            loader.setController(new BillController(bill));
+            Parent root = loader.load();
+            Scene scene = new Scene(root, 1114, 640);
+            Stage stage = (Stage) hyperlinkNewBill.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setResizable(false);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public void initialize(URL location, ResourceBundle resources) {
         Settings.createSettings();
         Settings.loadSettings();
         RecentBillsList.createList();
         RecentBillsList.loadList();
+        RecentBillsList.checkBillList();
 
         hyperlinkNewBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Stage stage = (Stage) hyperlinkNewBill.getScene().getWindow();
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
-                    loader.setController(new BillController());
-                    Parent root = loader.load();
-                    Scene scene = new Scene(root, 1114, 640);
-                    scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-                    stage.setScene(scene);
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
+                createBillWindow();
             }
         });
 
         hyperlinkLoadBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                File fileToOpen = OpenDialog.openFile("Otwórz fakturę", Settings.getRecentDirectory());
+                File fileToOpen = OpenDialog.openFile("Otwórz fakturę", Settings.getRecentDirectory(),"*.lmb", "Luna Management Bill (*.lmb)");
                 Settings.setRecentDirectory(fileToOpen);
-                try{
-                    Bill bill = FileDAO.loadFromFile(fileToOpen);
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
-                    loader.setController(new BillController(bill));
-                    Parent root = loader.load();
-                    Scene scene = new Scene(root, 1114, 640);
-                    scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-                    Stage stage = (Stage) hyperlinkNewBill.getScene().getWindow();
-                    stage.setScene(scene);
-                }
-                catch (IOException e){
-                    e.printStackTrace();
-                }
-
+                createLoadedBillWindow(fileToOpen);
             }
         });
 
         hyperlinkPrintBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                File fileToOpen = OpenDialog.openFile("Drukuj fakturę PDF", Settings.getRecentDirectory());
+                File fileToOpen = OpenDialog.openFile("Drukuj fakturę PDF", Settings.getRecentDirectory(),"*.pdf", "PDF file (*.pdf)");
                 Settings.setRecentDirectory(fileToOpen);
                 PrintService service = PDFPrint.choosePrinter();
                 PDFPrint.printPDF(fileToOpen, service);
@@ -98,10 +107,19 @@ public class HomeController implements Initializable{
             }
         });
 
-        RecentBillsList.addBill(new File("test1"));
-        RecentBillsList.addBill(new File("test2"));
         tableRecentView.getItems().addAll(RecentBillsList.getBillList());
-        //TODO
+        columnName.setCellValueFactory(new PropertyValueFactory<File, String>("name"));
+
+        buttonOpen.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(tableRecentView.getSelectionModel().getSelectedItem() != null) {
+                    int selectedRow = tableRecentView.getSelectionModel().getSelectedIndex();
+                    File fileToOpen = (File)tableRecentView.getItems().get(selectedRow);
+                    createLoadedBillWindow(fileToOpen);
+                }
+            }
+        });
 
         Image logoLuna = new Image(getClass().getResourceAsStream("logoLunaApp.png"));
         canvasLogo.getGraphicsContext2D().drawImage(logoLuna,0,0);

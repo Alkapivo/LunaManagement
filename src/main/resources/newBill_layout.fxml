@@ -10,7 +10,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="640.0" minWidth="1114.0" prefHeight="640.0" prefWidth="1114.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane prefHeight="30.0" prefWidth="1090.0">
+      <Pane maxHeight="27.0" maxWidth="1090.0" minHeight="27.0" minWidth="1090.0" prefHeight="27.0" prefWidth="1090.0">
          <children>
             <Label layoutX="12.0" prefHeight="34.0" prefWidth="310.0" text="Dane faktury" textFill="#00000080">
                <font>
@@ -29,7 +29,7 @@
             </Label>
          </children>
       </Pane>
-      <Pane fx:id="paneNewBill" prefHeight="130.0" prefWidth="1090.0">
+      <Pane fx:id="paneNewBill" maxHeight="128.0" maxWidth="1090.0" minHeight="128.0" minWidth="1090.0" prefHeight="128.0" prefWidth="1090.0">
          <children>
             <Label layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="180.0" text="Nazwa faktury" />
             <Label layoutX="14.0" layoutY="60.0" prefHeight="17.0" prefWidth="194.0" text="Data" />
@@ -88,9 +88,9 @@
             <Insets />
          </VBox.margin>
       </Pane>
-      <Pane fx:id="paneTableView" prefHeight="393.0" prefWidth="1090.0">
+      <Pane fx:id="paneTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="391.0" minWidth="1090.0">
          <children>
-            <TableView fx:id="tablePurchaseView" layoutX="14.0" prefHeight="384.0" prefWidth="1065.0">
+            <TableView fx:id="tablePurchaseView" layoutX="14.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="384.0" minWidth="1065.0">
               <columns>
                   <TableColumn fx:id="columnNo" maxWidth="256.0" minWidth="48.0" prefWidth="48.0" text="L.p." />
                 <TableColumn fx:id="columnName" maxWidth="256.0" minWidth="192.0" prefWidth="192.0" text="Nazwa produktu" />
@@ -110,7 +110,7 @@
             <Insets bottom="12.0" />
          </VBox.margin>
       </Pane>
-      <Pane prefHeight="60.0" prefWidth="936.0">
+      <Pane maxHeight="58.0" maxWidth="1090.0" minHeight="58.0" minWidth="1090.0" prefHeight="58.0" prefWidth="1090.0">
          <children>
             <Label layoutX="14.0" layoutY="5.0" text="Suma (netto)" />
             <Label layoutX="206.0" layoutY="6.0" text="Suma (cena ręczna)" />
@@ -124,9 +124,10 @@
                   <Font size="24.0" />
                </font>
             </Label>
-            <Button fx:id="buttonSave" layoutX="764.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Zapisz" />
-            <Button fx:id="buttonExport" layoutX="872.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Eksportuj" />
-            <Button fx:id="buttonPrint" layoutX="980.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Drukuj" />
+            <Button fx:id="buttonSave" disable="true" layoutX="656.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Zapisz" />
+            <Button fx:id="buttonExport" disable="true" layoutX="764.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Eksportuj" />
+            <Button fx:id="buttonPrint" disable="true" layoutX="872.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Drukuj" />
+            <Button fx:id="buttonMenu" layoutX="980.0" layoutY="12.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="96.0" text="Menu" />
          </children>
       </Pane>
    </children>

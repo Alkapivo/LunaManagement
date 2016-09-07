@@ -3,22 +3,29 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Callback;
-
-
 import javax.print.PrintService;
 
 
@@ -72,7 +79,10 @@ public class BillController implements Initializable {
     @FXML Button buttonSave;
     @FXML Button buttonExport;
     @FXML Button buttonPrint;
-    @FXML Button buttonImport;
+    @FXML Button buttonMenu;
+
+    @FXML Pane paneTableView;
+    @FXML VBox vbox;
 
     private Bill bill;
 
@@ -95,8 +105,6 @@ public class BillController implements Initializable {
         }
         sumNetto.setText(String.format("%.2f", totalSumNetto)+" zł");
         sumPrice.setText(String.format("%.2f", totalSumPrice)+" zł");
-        //sumNetto.setText(Double.toString(totalSumNetto)+" zł");
-        //sumPrice.setText(Double.toString(totalSumPrice)+" zł");
     }
 
     public void updateIndBrutto() {
@@ -189,6 +197,9 @@ public class BillController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         Settings.createSettings();
         Settings.loadSettings();
+        RecentBillsList.createList();
+        RecentBillsList.loadList();
+
         if(bill == null) {
             //datepicker initialize to today
             datePickerCreateDate.setValue(LocalDate.now());
@@ -198,7 +209,6 @@ public class BillController implements Initializable {
             datePickerCreateDate.setValue(bill.getDate());
             tvCreatorName.setText(bill.getName());
             tablePurchaseView.getItems().addAll(bill.getList());
-
         }
 
         typeTextFieldInt(tvProductCount);
@@ -251,18 +261,30 @@ public class BillController implements Initializable {
                 paneIndPurchase.setDisable(false);
                 buttonStartBill.setDisable(true);
                 buttonCancelBill.setDisable(false);
+                buttonSave.setDisable(false);
+                buttonExport.setDisable(false);
+                buttonPrint.setDisable(false);
+            }
+        });
+
+        buttonCancelBill.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                tvCreatorName.setDisable(false);
+                datePickerCreateDate.setDisable(false);
+                paneAddPurchase.setDisable(true);
+                paneIndPurchase.setDisable(true);
+                buttonStartBill.setDisable(false);
+                buttonCancelBill.setDisable(true);
+                buttonSave.setDisable(true);
+                buttonExport.setDisable(true);
+                buttonPrint.setDisable(true);
             }
         });
 
         buttonAddPurchase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                tvProductCount.getStyleClass().remove("error");
-                tvProductCount.setPromptText("");
-                tvProductTax.getStyleClass().remove("error");
-                tvProductTax.setPromptText("");
-                tvProductNetto.getStyleClass().remove("error");
-                tvProductNetto.setPromptText("");
 
                 String productName = tvProductName.getText().trim();
                 String productCountString = tvProductCount.getText().trim();
@@ -271,58 +293,34 @@ public class BillController implements Initializable {
                 String productNettoString = tvProductNetto.getText().trim();
                 String productPriceString = tvProductPrice.getText().trim();
 
-                //productCount
-                if(productCountString.isEmpty()){
-                    tvProductCount.getStyleClass().add("error");
-                    tvProductCount.setPromptText("puste!");
-                    return;
-                }
-                int productCount = Integer.parseInt(productCountString);
+                if(productCountString.isEmpty()) {return;}
+                if(productTaxString.isEmpty()) {return;}
+                if(productMarginString.isEmpty()) {return;}
+                if(productNettoString.isEmpty()) {return;}
+                if(productPriceString.isEmpty()) {return;}
 
-                //productTax
-                if(productTaxString.isEmpty()){
-                    tvProductTax.getStyleClass().add("error");
-                    tvProductTax.setPromptText("puste!");
-                    return;
-                }
+                int productCount = Integer.parseInt(productCountString);
                 int productTax = Integer.parseInt(productTaxString);
-                if(!(productTax >= 0 && productTax <= 100)) {
-                    tvProductTax.getStyleClass().add("error");
-                    tvProductTax.setPromptText("zły zakres!");
-                    return;
-                }
-                //productMargin
-                if(productMarginString.isEmpty()){
-                    tvProductMargin.getStyleClass().add("error");
-                    tvProductMargin.setPromptText("puste!");
-                    return;
-                }
+                if(!(productTax >= 0 && productTax <= 100)) {return;}
+
                 int productMargin = Integer.parseInt(productMarginString);
-                if(!(productTax >= 0 && productTax <= 100)) {
-                    tvProductMargin.getStyleClass().add("error");
-                    tvProductMargin.setPromptText("zły zakres!");
-                    return;
-                }
+                if(!(productMargin >= 0 && productMargin <= 100)) {return;}
 
                 //productNetto
-                double productNetto;
+                double productNetto = 0;
                 try {
                     productNetto = Double.parseDouble(productNettoString);
                 }
                 catch (NumberFormatException e) {
-                    tvProductNetto.getStyleClass().add("error");
-                    tvProductNetto.setPromptText("co to?");
                     return;
                 }
 
                 //productPrice
-                double productPrice;
+                double productPrice = 0;
                 try {
                     productPrice = Double.parseDouble(productPriceString);
                 }
                 catch (NumberFormatException e) {
-                    tvProductPrice.getStyleClass().add("error");
-                    tvProductPrice.setPromptText("co to??");
                     return;
                 }
 
@@ -330,10 +328,8 @@ public class BillController implements Initializable {
                 tvProductCount.setText("");
                 tvProductNetto.setText("");
                 tvProductPrice.setText("");
-
                 Purchase purchase = new Purchase(productName,productCount,productTax,productMargin,productNetto,productPrice);
                 tablePurchaseView.getItems().add(purchase);
-
                 sumTable();
             }
         });
@@ -346,24 +342,25 @@ public class BillController implements Initializable {
                     tablePurchaseView.getItems().remove(selectedRow);
                     sumTable();
                 }
-
             }
         });
 
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                File fileToSave = OpenDialog.saveFile("Zapisz fakturę", Settings.getRecentDirectory());
+                File fileToSave = OpenDialog.saveFile("Zapisz fakturę",Settings.getRecentDirectory(),".lmb", tvCreatorName.getText());
                 Settings.setRecentDirectory(fileToSave);
                 Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(), new ArrayList(tablePurchaseView.getItems()));
                 FileDAO.saveToFile(bill, fileToSave);
+                RecentBillsList.addBill(fileToSave);
+                RecentBillsList.saveList();
             }
         });
 
         buttonExport.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                File fileToSave = OpenDialog.saveFile("Eksportuj fakturę", Settings.getRecentDirectory());
+                File fileToSave = OpenDialog.saveFile("Eksportuj fakturę",Settings.getRecentDirectory(),".pdf", tvCreatorName.getText());
                 Settings.setRecentDirectory(fileToSave);
                 PDFCreator.createPDF(tablePurchaseView,tvCreatorName.getText(),datePickerCreateDate.getValue().toString(),sumNetto.getText(),sumPrice.getText(),fileToSave);
             }
@@ -381,6 +378,40 @@ public class BillController implements Initializable {
                 }
                 catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        });
+
+        buttonMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Ostrzeżenie");
+                alert.setHeaderText("Powrót do ekranu startowego wiąże się z utratą niezapisanych danych.");
+                alert.setContentText("Czy na pewno chcesz wrócić?");
+
+                ButtonType buttonTypeOne = new ButtonType("Tak");
+                ButtonType buttonTypeTwo = new ButtonType("Nie");
+
+                alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == buttonTypeOne) {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("home_layout.fxml"));
+                        loader.setController(new HomeController());
+                        Parent root = loader.load();
+                        Scene scene = new Scene(root, 1114, 640);
+                        Stage stage = (Stage) buttonMenu.getScene().getWindow();
+                        stage.setScene(scene);
+                        stage.setResizable(false);
+                        stage.setTitle("Luna Management");
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (result.get() == buttonTypeTwo) {
+                    // ... user chose "Two"
                 }
             }
         });

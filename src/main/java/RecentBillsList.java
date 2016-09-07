@@ -2,9 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Lenovo on 04.09.2016.
- */
+
 public class RecentBillsList {
     private static List billList;
 
@@ -39,10 +37,24 @@ public class RecentBillsList {
     }
 
     public static void addBill(File billFile) {
-        billList.add(billFile);
+        if(!billList.contains(billFile)) {
+            if(billList.size() > 9)
+                billList.remove(billList.size() - 1);
+            billList.add(0,billFile);
+        }
     }
 
     public static List getBillList() {
         return billList;
+    }
+
+    public static void checkBillList() {
+        for(int i=0; i<billList.size(); i++) {
+            File tempFile = (File)billList.get(i);
+            if (!tempFile.exists()) {
+                billList.remove(i);
+                i -= 1;
+            }
+        }
     }
 }

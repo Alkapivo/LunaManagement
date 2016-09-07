@@ -1,8 +1,6 @@
 import java.io.*;
 
-/**
- * Created by Lenovo on 30.08.2016.
- */
+
 public class FileDAO {
     public static void saveToFile(Bill bill, File fileToSave) {
         try {
@@ -13,7 +11,6 @@ public class FileDAO {
         }
         catch (IOException e) {
             e.printStackTrace();
-            //TODO
         }
     }
     public static Bill loadFromFile(File fileToOpen) {

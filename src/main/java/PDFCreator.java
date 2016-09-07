@@ -12,14 +12,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Created by Krolis on 2016-09-06.
- */
+
 public class PDFCreator {
 
     public static void createPDF(TableView tablePurchaseView, String billName, String billDate, String labelSumNetto, String labelSumPrice, File pdfFile) {
         try {
-            //Document document = new Document(PageSize.A4.rotate(), 24f, 56f, 56f, 24f);
             Document document = new Document(PageSize.A4,24f,24f, 36f, 36f);
             PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
             document.open();
@@ -40,9 +37,9 @@ public class PDFCreator {
             Font cellFont = new Font(helvetica, 8, Font.NORMAL);
             Font titleFont = new Font(helvetica, 16, Font.NORMAL);
             Font dateFont = new Font(helvetica, 13, Font.NORMAL, BaseColor.GRAY);
+            LineSeparator ls = new LineSeparator(0.5F,100f,BaseColor.DARK_GRAY,Element.ALIGN_BASELINE,0f);
 
             String[] columnNames = {"L.p.", "Nazwa produktu", "Ilość", "Jed. netto", "Jed. VAT [%]", "Netto", "Jed. brutto", "Jed. marża [%]", "Jed. cena", "Jed. cena r.", "Cena ręczna"};
-            //TableColumn[] columnLabel = {columnNo, columnName, columnCount, columnNetto, columnTax, columnNettoAll, columnBrutto, columnMargin, columnBruttoAll, columnPrice, columnPriceAll};
 
             PdfPTable head = new PdfPTable(3);
             head.setWidthPercentage(100f);
@@ -69,7 +66,6 @@ public class PDFCreator {
             head.setSpacingAfter(6f);
             document.add(head);
 
-            LineSeparator ls = new LineSeparator(0.5F,100f,BaseColor.DARK_GRAY,Element.ALIGN_BASELINE,0f);
             document.add(new Chunk(ls));
 
             for (int i=0; i<columnSize; i++) {
@@ -150,8 +146,6 @@ public class PDFCreator {
 
             footer.setSpacingAfter(10f);
             document.add(footer);
-
-            document.add(new Chunk(ls));
 
             document.close();
         }

@@ -1,11 +1,8 @@
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Lenovo on 30.08.2016.
- */
+
 public class Bill implements Serializable {
     private String name;
     private LocalDate date;

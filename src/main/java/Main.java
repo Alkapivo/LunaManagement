@@ -4,9 +4,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/**
- * Created by Krolis on 2016-08-26.
- */
+
 public class Main extends Application{
 
     public static void main(String[] args){
@@ -19,9 +17,9 @@ public class Main extends Application{
         loader.setController(new HomeController());
         Parent root = loader.load();
         Scene scene = new Scene(root, 1114, 640);
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Luna Manager");
+        primaryStage.setTitle("Luna Management");
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 }

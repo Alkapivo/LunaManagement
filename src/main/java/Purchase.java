@@ -1,8 +1,6 @@
 import java.io.Serializable;
+import static java.lang.StrictMath.floor;
 
-/**
- * Created by Krolis on 2016-08-26.
- */
 public class Purchase implements Serializable {
     private String productName;
     private int productCount;
@@ -15,17 +13,17 @@ public class Purchase implements Serializable {
     private double productPrice;
     private double productPriceAll;
 
-
-
     public Purchase(String productName, int productCount, int productTax, int productMargin, double productNetto, double productPrice) {
+        double tempBrutto = floor(100*(productNetto*(productTax/100.0)+productNetto))/100.0;
+        double tempBruttoPrice = floor(100*(productNetto*(productTax/100.0)+productNetto*(productMargin/100.0)+productNetto))/100.0;
         this.productName = productName;
         this.productCount = productCount;
         this.productNetto = productNetto;
         this.productTax = productTax;
         this.productNettoAll = productNetto*productCount;
-        this.productBrutto = productNetto*(productTax/100.0)+productNetto;
+        this.productBrutto = tempBrutto;
         this.productMargin = productMargin;
-        this.productBruttoPrice = productNetto*(productTax/100.0)+productNetto*(productMargin/100.0)+productNetto;
+        this.productBruttoPrice = tempBruttoPrice;
         this.productPrice = productPrice;
         this.productPriceAll = productPrice*productCount;
     }

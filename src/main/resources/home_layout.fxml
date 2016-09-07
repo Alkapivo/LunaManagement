@@ -10,14 +10,14 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="1114.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="640.0" maxWidth="1114.0" minHeight="640.0" minWidth="1114.0" prefHeight="640.0" prefWidth="1114.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane fx:id="paneLogo" prefHeight="228.0" prefWidth="1114.0">
+      <Pane fx:id="paneLogo" maxHeight="209.0" maxWidth="1114.0" minHeight="209.0" minWidth="1114.0" prefHeight="209.0" prefWidth="1114.0">
          <children>
             <Canvas fx:id="canvasLogo" height="182.0" layoutX="375.0" layoutY="14.0" width="365.0" />
          </children>
       </Pane>
-      <Pane prefHeight="136.0" prefWidth="1114.0">
+      <Pane maxHeight="136.0" maxWidth="1114.0" minHeight="136.0" minWidth="1114.0" prefHeight="136.0" prefWidth="1114.0">
          <children>
             <Pane layoutX="150.0" layoutY="5.0" prefHeight="126.0" prefWidth="272.0">
                <children>
@@ -52,7 +52,7 @@
             </Pane>
          </children>
       </Pane>
-      <Pane prefHeight="333.0" prefWidth="1114.0">
+      <Pane maxHeight="295.0" maxWidth="1114.0" minHeight="295.0" minWidth="1114.0" prefHeight="295.0" prefWidth="1114.0">
          <children>
             <Label layoutX="174.0" layoutY="14.0" prefHeight="35.0" prefWidth="789.0" text="Ostatnie faktury">
                <font>
@@ -61,7 +61,7 @@
             </Label>
             <TableView fx:id="tableRecentView" layoutX="174.0" layoutY="58.0" prefHeight="166.0" prefWidth="789.0">
               <columns>
-                <TableColumn fx:id="columnName" maxWidth="788.0" minWidth="788.0" prefWidth="788.0" text="Nazwa faktury" />
+                <TableColumn fx:id="columnName" maxWidth="787.0" minWidth="787.0" prefWidth="787.0" text="Nazwa faktury" />
               </columns>
             </TableView>
             <Button fx:id="buttonOpen" layoutX="867.0" layoutY="238.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="96.0" text="Otwórz" />
