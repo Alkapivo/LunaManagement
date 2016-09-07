@@ -374,6 +374,7 @@ public class BillController implements Initializable {
             public void handle(ActionEvent event) {
                 PrintService service = PDFPrint.choosePrinter();
                 File printFile = new File("temp.pdf");
+                PDFCreator.createPDF(tablePurchaseView,tvCreatorName.getText(),datePickerCreateDate.getValue().toString(),sumNetto.getText(),sumPrice.getText(),printFile);
                 PDFPrint.printPDF(printFile, service);
                 try {
                     printFile.delete();
