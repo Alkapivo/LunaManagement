@@ -3,49 +3,38 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.*;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import java.awt.*;
+import javax.print.PrintService;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Created by Krolis on 2016-08-26.
- */
 public class HomeController implements Initializable{
 
-    @FXML
-    Hyperlink hyperlinkNewBill;
-
-    @FXML
-    Hyperlink hyperlinkLoadBill;
-
-    @FXML
-    Canvas canvasLogo;
-
-    @FXML
-    Pane paneLogo;
+    @FXML Hyperlink hyperlinkNewBill;
+    @FXML Hyperlink hyperlinkLoadBill;
+    @FXML Hyperlink hyperlinkPrintBill;
+    @FXML Hyperlink hyperlinkChangeHomeDirectory;
+    @FXML Canvas canvasLogo;
+    @FXML Pane paneLogo;
+    @FXML TableView tableRecentView;
+    @FXML TableColumn columnName;
+    @FXML Button buttonOpen;
 
 
     public void initialize(URL location, ResourceBundle resources) {
-
-        //Loading settings
-
+        Settings.createSettings();
+        Settings.loadSettings();
         hyperlinkNewBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -59,7 +48,6 @@ public class HomeController implements Initializable{
                     stage.setScene(scene);
                 }
                 catch (IOException e) {
-                    System.out.println("Exception homectrl");
                     e.printStackTrace();
                 }
             }
@@ -68,9 +56,8 @@ public class HomeController implements Initializable{
         hyperlinkLoadBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                File filen = new File(".");
-                File fileToOpen = ChooseWindow.openFile("Otwórz fakturę", filen);
-
+                File fileToOpen = OpenDialog.openFile("Otwórz fakturę", Settings.getRecentDirectory());
+                Settings.setRecentDirectory(fileToOpen);
                 try{
                     Bill bill = FileDAO.loadFromFile(fileToOpen);
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("newBill_layout.fxml"));
@@ -80,12 +67,33 @@ public class HomeController implements Initializable{
                     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
                     Stage stage = (Stage) hyperlinkNewBill.getScene().getWindow();
                     stage.setScene(scene);
-                }catch (IOException e){
+                }
+                catch (IOException e){
                     e.printStackTrace();
                 }
 
             }
         });
+
+        hyperlinkPrintBill.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                File fileToOpen = OpenDialog.openFile("Drukuj fakturę PDF", Settings.getRecentDirectory());
+                Settings.setRecentDirectory(fileToOpen);
+                PrintService service = PDFPrint.choosePrinter();
+                PDFPrint.printPDF(fileToOpen, service);
+            }
+        });
+
+        hyperlinkChangeHomeDirectory.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                File homeDirectory = OpenDialog.openDirectory("Wybierz katalog domowy", Settings.getRecentDirectory());
+                Settings.setRecentDirectory(homeDirectory);
+                Settings.setHomeDirectory(homeDirectory);
+            }
+        });
+
         Image logoLuna = new Image(getClass().getResourceAsStream("logoLunaApp.png"));
         canvasLogo.getGraphicsContext2D().drawImage(logoLuna,0,0);
         paneLogo.setStyle("-fx-background-color: #34485b;");

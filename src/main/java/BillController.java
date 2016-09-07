@@ -8,10 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
-
-import java.awt.print.PrinterJob;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,8 +17,7 @@ import java.util.function.UnaryOperator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.util.Callback;
-import java.awt.print.PrinterException;
-import org.apache.pdfbox.pdmodel.PDDocument;
+
 
 import javax.print.PrintService;
 
@@ -191,6 +187,8 @@ public class BillController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Settings.createSettings();
+        Settings.loadSettings();
         if(bill == null) {
             //datepicker initialize to today
             datePickerCreateDate.setValue(LocalDate.now());
@@ -355,22 +353,19 @@ public class BillController implements Initializable {
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //TODO dodaj okienko zapisywania
+                File fileToSave = OpenDialog.saveFile("Zapisz fakturę", Settings.getRecentDirectory());
+                Settings.setRecentDirectory(fileToSave);
                 Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(), new ArrayList(tablePurchaseView.getItems()));
-                FileDAO.saveToFile(bill);
-
-
+                FileDAO.saveToFile(bill, fileToSave);
             }
         });
 
         buttonExport.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                PDFCreator.createPDF(tablePurchaseView,
-                                        tvCreatorName.getText(),
-                                        datePickerCreateDate.getValue().toString(),
-                                        sumNetto.getText(),
-                                        sumPrice.getText());
+                File fileToSave = OpenDialog.saveFile("Zapisz fakturę", Settings.getRecentDirectory());
+                Settings.setRecentDirectory(fileToSave);
+                PDFCreator.createPDF(tablePurchaseView,tvCreatorName.getText(),datePickerCreateDate.getValue().toString(),sumNetto.getText(),sumPrice.getText(),fileToSave);
             }
         });
 
@@ -378,7 +373,14 @@ public class BillController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 PrintService service = PDFPrint.choosePrinter();
-                PDFPrint.printPDF("test2.pdf", service);
+                File printFile = new File("temp.pdf");
+                PDFPrint.printPDF(printFile, service);
+                try {
+                    printFile.delete();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 

@@ -4,9 +4,9 @@ import java.io.*;
  * Created by Lenovo on 30.08.2016.
  */
 public class FileDAO {
-    public static void saveToFile(Bill bill) {
+    public static void saveToFile(Bill bill, File fileToSave) {
         try {
-            ObjectOutputStream save = new ObjectOutputStream(new FileOutputStream("chuj.txt"));
+            ObjectOutputStream save = new ObjectOutputStream(new FileOutputStream(fileToSave));
             save.writeObject(bill);
             save.flush();
             save.close();

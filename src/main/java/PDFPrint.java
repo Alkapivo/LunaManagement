@@ -2,6 +2,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import javax.print.PrintService;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.File;
 import java.io.IOException;
 
 public class PDFPrint {
@@ -15,7 +16,7 @@ public class PDFPrint {
         }
     }
 
-    public static void printPDF(String fileName, PrintService printer) {
+    public static void printPDF(File fileName, PrintService printer) {
         try {
             PrinterJob job = PrinterJob.getPrinterJob();
             job.setPrintService(printer);

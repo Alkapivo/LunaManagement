@@ -7,6 +7,7 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -16,11 +17,11 @@ import java.util.*;
  */
 public class PDFCreator {
 
-    public static void createPDF(TableView tablePurchaseView, String billName, String billDate, String labelSumNetto, String labelSumPrice) {
+    public static void createPDF(TableView tablePurchaseView, String billName, String billDate, String labelSumNetto, String labelSumPrice, File pdfFile) {
         try {
             //Document document = new Document(PageSize.A4.rotate(), 24f, 56f, 56f, 24f);
             Document document = new Document(PageSize.A4,24f,24f, 36f, 36f);
-            PdfWriter.getInstance(document, new FileOutputStream("test2.pdf"));
+            PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
             document.open();
 
             int columnSize = tablePurchaseView.getColumns().size();
