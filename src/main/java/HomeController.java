@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -35,6 +36,9 @@ public class HomeController implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
         Settings.createSettings();
         Settings.loadSettings();
+        RecentBillsList.createList();
+        RecentBillsList.loadList();
+
         hyperlinkNewBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -93,6 +97,11 @@ public class HomeController implements Initializable{
                 Settings.setHomeDirectory(homeDirectory);
             }
         });
+
+        RecentBillsList.addBill(new File("test1"));
+        RecentBillsList.addBill(new File("test2"));
+        tableRecentView.getItems().addAll(RecentBillsList.getBillList());
+        //TODO
 
         Image logoLuna = new Image(getClass().getResourceAsStream("logoLunaApp.png"));
         canvasLogo.getGraphicsContext2D().drawImage(logoLuna,0,0);

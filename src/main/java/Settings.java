@@ -20,10 +20,10 @@ public class Settings {
             System.out.println(settingsList.get(0).toString()+"\n"+settingsList.get(1).toString());
         }
         catch (IOException e) {
-            e.printStackTrace();
+            saveSettings();
         }
         catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            saveSettings();
         }
         if (!homeDirectory.exists() || !recentDirectory.exists()) {
             createSettings();
