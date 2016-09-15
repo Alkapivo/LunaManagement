@@ -10,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,6 @@ import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -82,7 +80,6 @@ public class BillController implements Initializable {
     @FXML Button buttonMenu;
 
     @FXML Pane paneTableView;
-    @FXML VBox vbox;
 
     private Bill bill;
 
@@ -201,11 +198,9 @@ public class BillController implements Initializable {
         RecentBillsList.loadList();
 
         if(bill == null) {
-            //datepicker initialize to today
             datePickerCreateDate.setValue(LocalDate.now());
         }
         else {
-            //initialize all
             datePickerCreateDate.setValue(bill.getDate());
             tvCreatorName.setText(bill.getName());
             tablePurchaseView.getItems().addAll(bill.getList());
@@ -285,7 +280,6 @@ public class BillController implements Initializable {
         buttonAddPurchase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
                 String productName = tvProductName.getText().trim();
                 String productCountString = tvProductCount.getText().trim();
                 String productTaxString = tvProductTax.getText().trim();
@@ -293,41 +287,24 @@ public class BillController implements Initializable {
                 String productNettoString = tvProductNetto.getText().trim();
                 String productPriceString = tvProductPrice.getText().trim();
 
-                if(productCountString.isEmpty()) {return;}
-                if(productTaxString.isEmpty()) {return;}
-                if(productMarginString.isEmpty()) {return;}
-                if(productNettoString.isEmpty()) {return;}
-                if(productPriceString.isEmpty()) {return;}
+                if (!ValidatePurchase.validateName(productName))            {return;}
+                if (!ValidatePurchase.validateCount(productCountString))    {return;}
+                if (!ValidatePurchase.validatePercent(productTaxString))    {return;}
+                if (!ValidatePurchase.validatePercent(productMarginString)) {return;}
+                if (!ValidatePurchase.validatePrice(productNettoString))    {return;}
+                if (!ValidatePurchase.validatePrice(productPriceString))    {return;}
 
                 int productCount = Integer.parseInt(productCountString);
                 int productTax = Integer.parseInt(productTaxString);
-                if(!(productTax >= 0 && productTax <= 100)) {return;}
-
                 int productMargin = Integer.parseInt(productMarginString);
-                if(!(productMargin >= 0 && productMargin <= 100)) {return;}
-
-                //productNetto
-                double productNetto = 0;
-                try {
-                    productNetto = Double.parseDouble(productNettoString);
-                }
-                catch (NumberFormatException e) {
-                    return;
-                }
-
-                //productPrice
-                double productPrice = 0;
-                try {
-                    productPrice = Double.parseDouble(productPriceString);
-                }
-                catch (NumberFormatException e) {
-                    return;
-                }
+                double productNetto = Double.parseDouble(productNettoString);
+                double productPrice = Double.parseDouble(productPriceString);
 
                 tvProductName.setText("");
                 tvProductCount.setText("");
                 tvProductNetto.setText("");
                 tvProductPrice.setText("");
+
                 Purchase purchase = new Purchase(productName,productCount,productTax,productMargin,productNetto,productPrice);
                 tablePurchaseView.getItems().add(purchase);
                 sumTable();
@@ -410,8 +387,6 @@ public class BillController implements Initializable {
                     catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else if (result.get() == buttonTypeTwo) {
-                    // ... user chose "Two"
                 }
             }
         });
