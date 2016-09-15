@@ -44,3 +44,5 @@ public class Bill implements Serializable {
         return result;
     }
 }
+
+//Bill bill = new Bill("Name",

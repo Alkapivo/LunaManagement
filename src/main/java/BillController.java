@@ -21,7 +21,6 @@ import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javax.print.PrintService;
@@ -108,18 +107,18 @@ public class BillController implements Initializable {
         String indTax = tvProductTax.getText();
         String indMargin = tvProductMargin.getText();
         String indNetto = tvProductNetto.getText();
+
+        if (indTax.isEmpty())       {indTax = "0";}
+        if (indMargin.isEmpty())    {indMargin = "0";}
+        if (indNetto.isEmpty())     {indNetto = "0";}
+
+        double indTaxD = Double.parseDouble(indTax)/100.0;
+        double indMarginD = Double.parseDouble(indMargin)/100.0;
+        double indNettoD = Double.parseDouble(indNetto);
         double indBrutto = 0;
 
-        if (indTax.isEmpty())
-            indTax = "0";
-        if (indMargin.isEmpty())
-            indMargin = "0";
-        if (indNetto.isEmpty())
-            indNetto = "0";
-
-        indBrutto = Double.parseDouble(indNetto)*(Double.parseDouble(indTax)/100.0)+Double.parseDouble(indNetto)*(Double.parseDouble(indMargin)/100.0)+Double.parseDouble(indNetto);
+        indBrutto = ((indNettoD+indNettoD*indTaxD)*indMarginD+(indNettoD+indNettoD*indTaxD));
         indProductBrutto.setText(String.format("%.2f", indBrutto));
-
         updateIndDiff();
     }
 

@@ -11,6 +11,7 @@ public class Settings {
     public static void createSettings() {
         homeDirectory = new File(".");
         recentDirectory = new File(".");
+        settingsList = new ArrayList();
     }
 
     public static void loadSettings() {
@@ -30,6 +31,7 @@ public class Settings {
             saveSettings();
         }
     }
+
     public static void saveSettings() {
         settingsList = new ArrayList();
         settingsList.add(0,homeDirectory);

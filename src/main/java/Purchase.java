@@ -15,7 +15,7 @@ public class Purchase implements Serializable {
 
     public Purchase(String productName, int productCount, int productTax, int productMargin, double productNetto, double productPrice) {
         double tempBrutto = floor(100*(productNetto*(productTax/100.0)+productNetto))/100.0;
-        double tempBruttoPrice = floor(100*(productNetto*(productTax/100.0)+productNetto*(productMargin/100.0)+productNetto))/100.0;
+        double tempBruttoPrice = floor(100*((productNetto+productNetto*(productTax/100.0))*(productMargin/100.0)+(productNetto+productNetto*(productTax/100.0))))/100.0;
         this.productName = productName;
         this.productCount = productCount;
         this.productNetto = productNetto;
