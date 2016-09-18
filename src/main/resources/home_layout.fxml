@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.paint.*?>
@@ -17,9 +18,9 @@
             <Canvas fx:id="canvasLogo" height="182.0" layoutX="375.0" layoutY="14.0" width="365.0" />
          </children>
       </Pane>
-      <Pane maxHeight="136.0" maxWidth="1114.0" minHeight="136.0" minWidth="1114.0" prefHeight="136.0" prefWidth="1114.0">
+      <Pane maxHeight="136.0" maxWidth="1114.0" minHeight="118.0" minWidth="1114.0" prefHeight="118.0" prefWidth="1114.0">
          <children>
-            <Pane layoutX="150.0" layoutY="5.0" prefHeight="126.0" prefWidth="272.0">
+            <Pane layoutX="163.0" layoutY="-4.0" prefHeight="126.0" prefWidth="282.0">
                <children>
                   <Label layoutX="20.0" layoutY="14.0" prefHeight="34.0" prefWidth="199.0" text="Start">
                      <font>
@@ -30,7 +31,7 @@
                   <Hyperlink fx:id="hyperlinkLoadBill" layoutX="20.0" layoutY="77.0" text="Otwórz istniejącą fakturę" />
                </children>
             </Pane>
-            <Pane layoutX="421.0" layoutY="5.0" prefHeight="126.0" prefWidth="272.0">
+            <Pane layoutX="445.0" layoutY="-4.0" prefHeight="126.0" prefWidth="262.0">
                <children>
                   <Label layoutX="20.0" layoutY="14.0" prefHeight="34.0" prefWidth="199.0" text="Przygotuj">
                      <font>
@@ -40,7 +41,7 @@
                   <Hyperlink fx:id="hyperlinkPrintBill" layoutX="20.0" layoutY="54.0" text="Drukuj fakturę" />
                </children>
             </Pane>
-            <Pane layoutX="693.0" layoutY="5.0" prefHeight="126.0" prefWidth="272.0">
+            <Pane layoutX="707.0" layoutY="-4.0" prefHeight="126.0" prefWidth="223.0">
                <children>
                   <Label layoutX="20.0" layoutY="14.0" prefHeight="34.0" prefWidth="199.0" text="Ustawienia">
                      <font>
@@ -48,24 +49,59 @@
                      </font>
                   </Label>
                   <Hyperlink fx:id="hyperlinkChangeHomeDirectory" layoutX="20.0" layoutY="54.0" text="Zmień domyślny katalog" />
+                  <Hyperlink fx:id="hyperlinkSettings" layoutX="20.0" layoutY="79.0" prefHeight="25.0" prefWidth="199.0" text="Zmień ustawienia logowania" />
                </children>
             </Pane>
          </children>
       </Pane>
-      <Pane maxHeight="295.0" maxWidth="1114.0" minHeight="295.0" minWidth="1114.0" prefHeight="295.0" prefWidth="1114.0">
-         <children>
-            <Label layoutX="174.0" layoutY="14.0" prefHeight="35.0" prefWidth="789.0" text="Ostatnie faktury">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <TableView fx:id="tableRecentView" layoutX="174.0" layoutY="58.0" prefHeight="166.0" prefWidth="789.0">
-              <columns>
-                <TableColumn fx:id="columnName" maxWidth="787.0" minWidth="787.0" prefWidth="787.0" text="Nazwa faktury" />
-              </columns>
-            </TableView>
-            <Button fx:id="buttonOpen" layoutX="867.0" layoutY="238.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="96.0" text="Otwórz" />
-         </children>
-      </Pane>
+      <TabPane prefHeight="322.0" prefWidth="1114.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab closable="false" text="Baza faktur">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="312.0" prefWidth="1114.0">
+                     <children>
+                        <Label layoutX="183.0" layoutY="15.0" prefHeight="35.0" prefWidth="138.0" text="Baza faktur">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                        <TableView fx:id="tableDatabaseView" layoutX="183.0" layoutY="59.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="166.0" minWidth="748.0" prefHeight="166.0" prefWidth="748.0">
+                          <columns>
+                            <TableColumn fx:id="columnNameDatabase" maxWidth="-Infinity" minWidth="746.0" prefWidth="746.0" text="Nazwa faktury" />
+                          </columns>
+                        </TableView>
+                        <ChoiceBox fx:id="chYear" layoutX="463.0" layoutY="19.0" prefHeight="25.0" prefWidth="96.0" />
+                        <ChoiceBox fx:id="chMonth" layoutX="571.0" layoutY="19.0" prefHeight="18.0" prefWidth="144.0" />
+                        <Button fx:id="buttonOpenDatabase" layoutX="727.0" layoutY="15.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="96.0" text="Otwórz" />
+                        <Button fx:id="buttonDeleteDatabase" layoutX="835.0" layoutY="15.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="96.0" text="Usuń" />
+                        <Hyperlink fx:id="hyperlinkDownloadDatabase" layoutX="183.0" layoutY="233.0" text="Pobierz bazę" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Ostatnie faktury">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="buttonOpenRecent" layoutX="835.0" layoutY="15.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="96.0" text="Otwórz" />
+                        <TableView fx:id="tableRecentView" layoutX="183.0" layoutY="59.0" prefHeight="166.0" prefWidth="748.0">
+                           <columns>
+                              <TableColumn fx:id="columnNameRecent" maxWidth="746.0" minWidth="746.0" prefWidth="746.0" text="Nazwa faktury" />
+                           </columns>
+                        </TableView>
+                        <Label layoutX="183.0" layoutY="15.0" prefHeight="35.0" prefWidth="199.0" text="Ostatnie faktury">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </TabPane>
    </children>
 </VBox>

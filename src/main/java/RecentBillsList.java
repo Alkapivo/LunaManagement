@@ -53,7 +53,7 @@ public class RecentBillsList {
             File tempFile = (File)billList.get(i);
             if (!tempFile.exists()) {
                 billList.remove(i);
-                i -= 1; //TODO secure?
+                i -= 1;
             }
         }
     }

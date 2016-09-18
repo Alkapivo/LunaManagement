@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="266.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="15.0" layoutY="10.0" prefHeight="27.0" prefWidth="289.0" text="Ustawienia logowania">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="18.0" layoutY="63.0" prefHeight="27.0" prefWidth="110.0" text="Login:" />
+      <Label layoutX="18.0" layoutY="99.0" prefHeight="27.0" prefWidth="110.0" text="Hasło:" />
+      <Label layoutX="18.0" layoutY="138.0" prefHeight="27.0" prefWidth="110.0" text="Serwer FTP:" />
+      <Label layoutX="18.0" layoutY="177.0" prefHeight="27.0" prefWidth="110.0" text="Port" />
+      <TextField fx:id="tvLogin" layoutX="106.0" layoutY="63.0" prefHeight="27.0" prefWidth="196.0" />
+      <PasswordField fx:id="tvPassword" layoutX="106.0" layoutY="99.0" prefHeight="27.0" prefWidth="196.0" />
+      <TextField fx:id="tvFTP" layoutX="106.0" layoutY="138.0" prefHeight="27.0" prefWidth="196.0" />
+      <TextField fx:id="tvPort" layoutX="106.0" layoutY="177.0" prefHeight="27.0" prefWidth="196.0" />
+      <Hyperlink fx:id="hyperlinkRestore" layoutX="15.0" layoutY="226.0" text="Przywróć domyślne" />
+      <Button fx:id="buttonAccept" layoutX="192.0" layoutY="225.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Zatwierdź" />
+   </children>
+</Pane>

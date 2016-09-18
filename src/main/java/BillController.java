@@ -10,6 +10,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import java.io.File;
 import java.io.IOException;
@@ -23,11 +27,15 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+
 import javax.print.PrintService;
+
+import static java.lang.StrictMath.floor;
 
 
 public class BillController implements Initializable {
 
+    private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
     //Edit bill data
     @FXML TextField tvCreatorName;
     @FXML DatePicker datePickerCreateDate;
@@ -49,16 +57,16 @@ public class BillController implements Initializable {
     //Table view pane
     @FXML TableView tablePurchaseView;
     @FXML TableColumn columnNo;
-    @FXML TableColumn columnName;
-    @FXML TableColumn columnCount;
-    @FXML TableColumn columnNetto;
-    @FXML TableColumn columnTax;
-    @FXML TableColumn columnNettoAll;
-    @FXML TableColumn columnBrutto;
-    @FXML TableColumn columnMargin;
-    @FXML TableColumn columnBruttoAll;
-    @FXML TableColumn columnPrice;
-    @FXML TableColumn columnPriceAll;
+    @FXML TableColumn<Purchase, String> columnName;
+    @FXML TableColumn<Purchase, Integer> columnCount;
+    @FXML TableColumn<Purchase, Double> columnNetto;
+    @FXML TableColumn<Purchase, Integer> columnTax;
+    @FXML TableColumn<Purchase, Double> columnNettoAll;
+    @FXML TableColumn<Purchase, Double> columnBrutto;
+    @FXML TableColumn<Purchase, Integer> columnMargin;
+    @FXML TableColumn<Purchase, Double> columnBruttoAll;
+    @FXML TableColumn<Purchase, Double> columnPrice;
+    @FXML TableColumn<Purchase, Double> columnPriceAll;
 
     //Indicators view pane
     @FXML Pane paneIndPurchase;
@@ -73,6 +81,7 @@ public class BillController implements Initializable {
     @FXML Label sumPrice;
 
     //File options pane
+    @FXML Button buttonSaveFTP;
     @FXML Button buttonSave;
     @FXML Button buttonExport;
     @FXML Button buttonPrint;
@@ -211,11 +220,6 @@ public class BillController implements Initializable {
         typeTextFieldMoney(tvProductNetto);
         typeTextFieldMoney(tvProductPrice);
 
-        tvProductNetto.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
-        });
-
         tvProductTax.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
@@ -226,7 +230,7 @@ public class BillController implements Initializable {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
         });
 
-        indProductBrutto.textProperty().addListener(new ChangeListener<String>() {
+        tvProductNetto.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
         });
@@ -243,6 +247,12 @@ public class BillController implements Initializable {
             }
         });
 
+        indProductBrutto.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { updateIndBrutto(); }
+        });
+
+
         buttonStartBill.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -255,6 +265,7 @@ public class BillController implements Initializable {
                 paneIndPurchase.setDisable(false);
                 buttonStartBill.setDisable(true);
                 buttonCancelBill.setDisable(false);
+                buttonSaveFTP.setDisable(false);
                 buttonSave.setDisable(false);
                 buttonExport.setDisable(false);
                 buttonPrint.setDisable(false);
@@ -270,6 +281,7 @@ public class BillController implements Initializable {
                 paneIndPurchase.setDisable(true);
                 buttonStartBill.setDisable(false);
                 buttonCancelBill.setDisable(true);
+                buttonSave.setDisable(true);
                 buttonSave.setDisable(true);
                 buttonExport.setDisable(true);
                 buttonPrint.setDisable(true);
@@ -321,10 +333,17 @@ public class BillController implements Initializable {
             }
         });
 
+        buttonSaveFTP.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FTP.uploadFile();
+            }
+        });
+
         buttonSave.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                File fileToSave = OpenDialog.saveFile("Zapisz fakturę",Settings.getRecentDirectory(),".lmb", tvCreatorName.getText());
+                File fileToSave = OpenDialog.saveFile("Zapisz fakturę",Settings.getBillDirectory(Settings.getHomeDirectory(),datePickerCreateDate.getValue().getYear(),datePickerCreateDate.getValue().getMonth()),".lmb", tvCreatorName.getText());
                 Settings.setRecentDirectory(fileToSave);
                 Bill bill = new Bill(tvCreatorName.getText(),datePickerCreateDate.getValue(), new ArrayList(tablePurchaseView.getItems()));
                 FileDAO.saveToFile(bill, fileToSave);
@@ -390,6 +409,91 @@ public class BillController implements Initializable {
             }
         });
 
+        paneTableView.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double prefHeight = paneTableView.getScene().getHeight();
+                paneTableView.setPrefHeight(prefHeight);
+                tablePurchaseView.setPrefHeight(prefHeight-240);
+            }
+        });
+
+        paneTableView.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double prefWidth = paneTableView.getScene().getWidth();
+                double tableWidth = floor((prefWidth-1114)/11.0);
+                paneTableView.setPrefWidth(prefWidth);
+                tablePurchaseView.setPrefWidth(prefWidth-50);
+
+                columnNo.setPrefWidth(48+tableWidth);
+                columnName.setPrefWidth(192+tableWidth);
+                columnCount.setPrefWidth(48+tableWidth);
+                columnNetto.setPrefWidth(90+tableWidth);
+                columnTax.setPrefWidth(96+tableWidth);
+                columnNettoAll.setPrefWidth(96+tableWidth);
+                columnBrutto.setPrefWidth(96+tableWidth);
+                columnMargin.setPrefWidth(108+tableWidth);
+                columnBruttoAll.setPrefWidth(96+tableWidth);
+                columnPrice.setPrefWidth(96+tableWidth);
+                columnPriceAll.setPrefWidth(97+tableWidth);
+
+                buttonSave.setLayoutX(prefWidth-458);
+                buttonExport.setLayoutX(prefWidth-350);
+                buttonPrint.setLayoutX(prefWidth-242);
+                buttonMenu.setLayoutX(prefWidth-134);
+            }
+        });
+
+        tablePurchaseView.setRowFactory(tv -> {
+            TableRow<Purchase> row = new TableRow<>();
+
+            row.setOnDragDetected(event -> {
+                if (! row.isEmpty()) {
+                    Integer index = row.getIndex();
+                    Dragboard db = row.startDragAndDrop(TransferMode.MOVE);
+                    db.setDragView(row.snapshot(null, null));
+                    ClipboardContent cc = new ClipboardContent();
+                    cc.put(SERIALIZED_MIME_TYPE, index);
+                    db.setContent(cc);
+                    event.consume();
+                }
+            });
+
+            row.setOnDragOver(event -> {
+                Dragboard db = event.getDragboard();
+                if (db.hasContent(SERIALIZED_MIME_TYPE)) {
+                    if (row.getIndex() != ((Integer)db.getContent(SERIALIZED_MIME_TYPE)).intValue()) {
+                        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                        event.consume();
+                    }
+                }
+            });
+
+            row.setOnDragDropped(event -> {
+                Dragboard db = event.getDragboard();
+                if (db.hasContent(SERIALIZED_MIME_TYPE)) {
+                    int draggedIndex = (Integer) db.getContent(SERIALIZED_MIME_TYPE);
+                    Purchase draggedPurchase = (Purchase)tablePurchaseView.getItems().remove(draggedIndex);
+
+                    int dropIndex ;
+
+                    if (row.isEmpty()) {
+                        dropIndex = tablePurchaseView.getItems().size() ;
+                    } else {
+                        dropIndex = row.getIndex();
+                    }
+
+                    tablePurchaseView.getItems().add(dropIndex, draggedPurchase);
+
+                    event.setDropCompleted(true);
+                    tablePurchaseView.getSelectionModel().select(dropIndex);
+                    event.consume();
+                }
+            });
+            return row ;
+        });
+
         tablePurchaseView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
@@ -414,7 +518,7 @@ public class BillController implements Initializable {
         columnMargin.setCellValueFactory(new PropertyValueFactory<Purchase, Integer>("productMargin"));
         columnBruttoAll.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productBruttoPrice"));
         columnPrice.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productPrice"));
-        columnPriceAll.setCellValueFactory(new PropertyValueFactory<Purchase, Integer>("productPriceAll"));
+        columnPriceAll.setCellValueFactory(new PropertyValueFactory<Purchase, Double>("productPriceAll"));
         sumTable();
     }
 }
